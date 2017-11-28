@@ -4,8 +4,8 @@
 <base href="">
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-<title>DocWorks UX</title>
+<meta name="google" content="notranslate" />
+<title>MockFlow WireframePro - Viewer</title>
 <!--  external css files -->
 <link href="https://wireframepro.mockflow.com/css/external/bootstrap3/bootstrap-editor-min.css" rel="stylesheet" type="text/css" />	
 <link href="https://wireframepro.mockflow.com/css/external/bootstrap3/bootstrap-theme.css" rel="stylesheet" type="text/css" />	
@@ -20,6 +20,9 @@
 
 <link href="https://wireframepro.mockflow.com/css/internal/icons/style.css" rel="stylesheet" type="text/css" />
 
+
+<!--  internal css files -->
+<link href="css/internal/editor-min.css?v=2017_11_24_20_36_57" rel="stylesheet" type="text/css">
 <style>
 	#mfPageManagerArea{
 		display:none;
@@ -28,9 +31,6 @@
 		display:none !important;
 	}
 </style>
-<!--  internal css files -->
-<link href="css/internal/editor-min.css?v=2017_09_26_15_19_34" rel="stylesheet" type="text/css">
-
 <!--  external js files --> 
 <!-- mfexternal-min.js -->
 
@@ -50,7 +50,7 @@
 <script type="text/javascript" src="https://d20hhedk3h2l88.cloudfront.net/apps/wireframepro/external/js/jquery.address-1.5.min.js"></script> 
 
 <!-- internal js files -->
-<script type="text/javascript" src="js/internal/mf_wireframepro-min.js?v=2017_09_26_15_19_34"></script>
+<script type="text/javascript" src="js/internal/mf_wireframepro-min.js?v=2017_11_24_20_36_57"></script>
 
 
 
@@ -161,7 +161,7 @@ $(window).resize();
 	 <span class="btn trasnparent-btn" style="font-size: 20px;"><i class="ico-zoom_in"></i></span>
 	</div>	
 	<div id="mfNavbarToggleBtn" class="">
-	 <span class="btn trasnparent-btn"><i class="ico-back"></i></span>
+	 <span data-placement="right" title="Hide sidebar"  data-toggle="tooltip" class="btn trasnparent-btn"><i class="ico-back"></i></span>
 	</div>	
 </div>
 
@@ -228,7 +228,7 @@ $(window).resize();
 	  		
 	  	</div>
 	  	
-	  <div title="Show sidebar" data-toggle="tooltip" class="mfShowSidebar"><button style="padding-top: 2px; padding-left: 2px;" class="btn trasnparent-btn"><i class="ico-forward"></i></button></div>
+	  <div title="Hide sidebar" data-placement="right" data-toggle="tooltip" class="mfShowSidebar"><button style="padding-top: 2px; padding-left: 2px;" class="btn trasnparent-btn"><i class="ico-forward"></i></button></div>
 	  
 		<div id="mfPageArea" style="float: right; width: 700px; height: 100%;" > 	  
 		
