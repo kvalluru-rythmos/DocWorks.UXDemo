@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+  Delete Tag -- {{tag.tagName}}
+</mat-toolbar>
+
+  this page loads all the dependency nodes for which the tag is assigned.
+
+<div fxLayout="column">
+  <div>Do you want to delete the Tag</div>
+  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px" fxFlexOffset="10px">
+    <button mat-raised-button color="primary" (click)="deleteTag()">
+      Confirm
+    </button>
+    <button mat-raised-button color="primary" (click)="cancelDelete()">
+      Cancel
+    </button>
+  </div>
+</div>

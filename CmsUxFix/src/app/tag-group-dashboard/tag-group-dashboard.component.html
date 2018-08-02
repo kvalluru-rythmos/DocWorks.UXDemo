@@ -1,0 +1,76 @@
+<div ngClass="content-body" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="15px" fxFlex>
+  <mat-list fxLayout="column" fxFlex="100" fxLayoutAlign="start stretch">
+    <div ngClass="docworksDarkTheme content-title">
+      <mat-toolbar fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+        <div fxFlex>Manage Tag Groups</div>
+        <div ngClass="inner-page-search-wrapper" fxFlex="300px" fxLayout="row" fxLayoutAlign="end">
+          <div fxFlex fxLayoutAlign="stretch center" fxFlexOffset="10px">
+            <input type="Search" ngClass="form-control" [(ngModel)]="searchString" placeholder="Type to Search" fxFlex>
+          </div>
+        </div>
+        <div fxLayoutAlign="end">
+          <button mat-raised-button color="primary" (click)="addNewTagGroup()" [fxHide]="!isOperationAllowed([cmsOperations.CreateTagGroup])">CREATE TAG GROUP</button>
+        </div>
+      </mat-toolbar>
+    </div>
+    <h3 matSubheader fxLayout="row" fxLayoutAlign="center center" fxFlex="50px">
+      <span fxFlex="20%" fxLayoutAlign="left">
+        Name
+        <i class="mdi mdi-unfold-more-horizontal mdi-18px cursor-pointer"></i>
+      </span>
+      <span fxFlex="18%" fxLayoutAlign="center">
+        Display on published page
+        <i class="mdi mdi-unfold-more-horizontal mdi-18px cursor-pointer"></i>
+      </span>
+      <span fxFlex="18%" fxLayoutAlign="center">
+        Include in published meta
+        <i class="mdi mdi-unfold-more-horizontal mdi-18px cursor-pointer"></i>
+      </span>
+      <span fxFlex="15%" fxLayoutAlign="center">
+        Projects Pointed
+        <i class="mdi mdi-unfold-more-horizontal mdi-18px cursor-pointer"></i>
+      </span>
+      <span fxFlex="9%" fxLayoutAlign="center">
+        No of Tags
+        <i class="mdi mdi-unfold-more-horizontal mdi-18px cursor-pointer"></i>
+      </span>
+      <span fxFlex="15%" fxLayoutAlign="center">
+        Last Modified
+        <i class="mdi mdi-unfold-more-horizontal mdi-18px cursor-pointer"></i>
+      </span>
+      <div fxFlex="5%" fxLayoutAlign="center">&nbsp;</div>
+    </h3>
+    <div fxLayout="column" fxLayoutAlign="start stretch" slimScroll ngClass="system-dashboard-scroll">
+      <div *ngFor="let tagGroup of tagGroups | sort: 'tagGroupName'| filter: 'tagGroupName': searchString">
+        <mat-list-item>
+          <div fxLayout="row" fxFlex fxLayoutAlign="start center">
+            <span fxFlex="20%" fxLayoutAlign="left" fxLayout="row" fxLayoutGap="10px">
+              <i [ngStyle]="{'color': tagGroup.colour}" class="mdi mdi-tag mdi-18px"></i>
+              <span>{{tagGroup.tagGroupName}}</span>
+            </span>
+            <span fxFlex="18%" fxLayoutAlign="center">{{tagGroup.public}}</span>
+            <span fxFlex="18%" fxLayoutAlign="center">{{tagGroup.publish}}</span>
+            <span fxFlex="15%" fxLayoutAlign="center">50</span>
+            <span fxFlex="9%" fxLayoutAlign="center">{{tagGroup.tags.length}}</span>
+            <span fxFlex="15%" fxLayoutAlign="center">{{"05/01/2017" | date : 'mediumDate'}}</span>
+            <mat-spinner *ngIf="tagGroup.inProgress" fxFlex="5%" fxLayoutAlign="center" style="float:right;" ngClass="tag-view-loader"></mat-spinner>
+            <mat-icon fxFlex="5%" fxLayoutAlign="center" *ngIf="!tagGroup.isSystemManaged&&!tagGroup.inProgress">
+              <i class="mdi mdi-dots-vertical mdi-24px cursor-pointer" [matMenuTriggerFor]="manageEditTags" [fxHide]="!isOperationAllowed([cmsOperations.EditTag,cmsOperations.CreateTagGroup])"></i>
+            </mat-icon>
+            <mat-menu #manageEditTags="matMenu">
+              <button mat-menu-item (click)="editTagGroup(tagGroup)" [fxHide]="!isOperationAllowed([cmsOperations.CreateTagGroup])">Edit Tag Group</button>
+              <button mat-menu-item (click)="manageTags(tagGroup)" [fxHide]="tagGroup.tagGroupType===tagGroupType.UserTagGroup||!isOperationAllowed([cmsOperations.EditTag])">Manage Tags</button>
+              <button mat-menu-item (click)="deleteTagGroup(tagGroup)">Delete Tag group</button>
+            </mat-menu>
+          </div>
+        </mat-list-item>
+      </div>
+
+      <div *ngIf="(tagGroups | filter: 'tagGroupName': searchString).length<1" fxLayoutAlign="center stretch" fxLayoutGap="40px">
+        <b>
+          No Record Found
+        </b>
+      </div>
+    </div>
+  </mat-list>
+</div>

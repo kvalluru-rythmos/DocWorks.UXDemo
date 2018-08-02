@@ -1,0 +1,276 @@
+<div fxLayout="column" ngClass="publish-distribution-wrapper" fxFlexFill>
+  <mat-toolbar color="primary">
+    <h3 fxFlex>{{distributionTitle}} Live Documents - Publish</h3>
+    <button mat-button mat-dialog-close>
+      <i class="mdi mdi-close mdi-24px"></i>
+    </button>
+  </mat-toolbar>
+  <mat-dialog-content ngClass="publish-distribution-content-wrapper" mat-dialog-content fxLayout="row" fxLayoutAlign="start stretch" fxFlex="100">
+    <div ngClass="publish-distribution-content-left" fxFlex="65" fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="15px">
+      <div fxFlex fxLayout="row" fxLayoutAlign="start stretch">
+        <div fxLayout="column" fxLayoutAlign="start stretch" fxFlex>
+          <h2 ngClass="mb-10">Publish Configuration</h2>
+          <div ngClass="publish-configuration mb-15" fxFlex="calc(100% - 199px)">
+            <div ngClass="mat-checkbox-group-wrapper mb-15">
+              <mat-checkbox [(indeterminate)]="indeterminate">Publish Online</mat-checkbox>
+              <div ngClass="mat-checkbox-group" fxLayout="column">
+                <mat-checkbox>Publish homepage</mat-checkbox>
+                <mat-checkbox>Visible from homepage</mat-checkbox>
+                <mat-checkbox>Skip manifests</mat-checkbox>
+              </div>
+            </div>
+            <div ngClass="mat-checkbox-group-wrapper mb-15">
+              <mat-checkbox [(indeterminate)]="indeterminate">Publish Offline</mat-checkbox>
+              <div ngClass="mat-checkbox-group" fxLayout="column">
+                <mat-checkbox>Website download</mat-checkbox>
+                <mat-checkbox>Editor download</mat-checkbox>
+                <mat-checkbox>Hub download</mat-checkbox>
+              </div>
+            </div>
+            <div ngClass="mat-checkbox-group-wrapper mb-15">
+              <mat-checkbox [(indeterminate)]="indeterminate">Publish ZIP</mat-checkbox>
+              <div ngClass="mat-checkbox-group" fxLayout="column">
+                <mat-checkbox>Debug online components</mat-checkbox>
+                <mat-checkbox>NDA docs</mat-checkbox>
+              </div>
+            </div>
+          </div>
+          <div fxFlex="161px">
+            <h2 ngClass="mb-10">Deployment Environment</h2>
+            <div ngClass="deployment-environment-wrapper mb-20" fxLayout="column" fxLayoutAlign="start stretch">
+              <mat-form-field ngClass="custom-input-field custom-select-field" floatPlaceholder="never">
+                <mat-select placeholder="Staging">
+                  <mat-option>Select 1</mat-option>
+                  <mat-option>Select 2</mat-option>
+                  <mat-option>Select 3</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <h2 ngClass="mb-10">HTML Template</h2>
+            <div ngClass="deployment-environment-wrapper" fxLayout="column" fxLayoutAlign="start stretch">
+              <mat-form-field ngClass="custom-input-field custom-select-field" floatPlaceholder="never">
+                <mat-select placeholder="Staging">
+                  <mat-option>Select 1</mat-option>
+                  <mat-option>Select 2</mat-option>
+                  <mat-option>Select 3</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div fxFlex="60" fxLayout="row" fxLayoutAlign="start stretch">
+        <div fxLayout="column" fxLayoutAlign="start stretch" fxFlex>
+          <h2 ngClass="mb-10">Exclude Tags</h2>
+          <div ngClass="mb-15" fxLayout="row" fxLayoutAlign="stretch center" fxFlex="37px">
+            <input type="Search" ngClass="form-control" placeholder="Type to Search" fxFlex>
+          </div>
+          <div ngClass="publish-distribution-tags-wrapper mb-15" fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start stretch" fxFlex="calc(50% - 87px)">
+            <div fxLayout="column" fxLayoutAlign="start stretch" fxFlex>
+              <h3 ngClass="mb-5">Available Tags</h3>
+              <div ngClass="publish-distribution-tags available-tags" fxFlex>
+                <mat-accordion ngClass="custom-mat-accordion">
+                  <mat-expansion-panel (opened)="panelOpenState = true" *ngFor="let tagGroup of availableTagGroups">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                          <i class="mdi mdi-tag mdi-18px"></i>
+                          <span>{{tagGroup.tagGroupName}}</span>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-chip-list ngClass="mat-chip-list-stacked" aria-orientation="vertical">
+                      <mat-chip selected="true" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="space-between center" *ngFor="let tag of tagGroup.tags">
+                        <span>{{tag.tagName}}</span>
+                        <i class="mdi mdi-plus-circle mdi-18px" (click)="addTag(tag,tagGroup)"></i>
+                      </mat-chip>
+                    </mat-chip-list>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+            </div>
+            <div fxLayout="column" fxLayoutAlign="start stretch" fxFlex>
+              <h3 ngClass="mb-5">Assigned Tags</h3>
+              <div ngClass="publish-distribution-tags assigned-tags" fxFlex>
+                <mat-accordion ngClass="custom-mat-accordion">
+                  <mat-expansion-panel (opened)="panelOpenState = true" *ngFor="let tagGroup of assignedTagGroups">
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                          <i class="mdi mdi-tag mdi-18px"></i>
+                          <span>{{tagGroup.tagGroupName}}</span>
+                        </div>
+                      </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <mat-chip-list ngClass="mat-chip-list-stacked" aria-orientation="vertical">
+                      <mat-chip selected="true" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="space-between center" *ngFor="let tag of tagGroup.tags">
+                        <span>{{tag.tagName}}</span>
+                        <i class="mdi mdi-minus-circle mdi-18px" (click)="removeTag(tag,tagGroup)"></i>
+                      </mat-chip>
+                    </mat-chip-list>
+                  </mat-expansion-panel>
+                </mat-accordion>
+              </div>
+            </div>
+          </div>
+          <h2 ngClass="mb-10">Exclude Nodes</h2>
+          <div ngClass="exclude-nodes-wrapper" fxFlex>
+            <p-tree [value]="filteredNodes" fxLayout="row" fxFlexFill *ngIf="!treeLoadInProgress">
+            </p-tree>
+            <div *ngIf="treeLoadInProgress" class="loadingholder">
+              <div class="middle"></div>
+              <div class="logoicon logoloader"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div fxLayout="column" ngClass="publish-distribution-content-right" fxFlex="35">
+      <h2 ngClass="mb-10">Publish Report</h2>
+      <div ngClass="publish-report-wrapper" fxLayout="column" fxFlex="calc(100% - 28px)">
+        <mat-accordion ngClass="custom-mat-accordion">
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                  <span>Dependencies</span>
+                  <mat-chip>9</mat-chip>
+                </div>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-list role="list">
+              <mat-list-item>
+                <p mat-line>Project A, Distribution B </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution B </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                  <span>Draft in Progress</span>
+                  <mat-chip>2</mat-chip>
+                </div>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-list role="list">
+              <mat-list-item>
+                <p mat-line>Project A, Distribution B </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                  <span>Publishing Queue</span>
+                  <mat-chip>9</mat-chip>
+                </div>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-list role="list">
+              <mat-list-item>
+                <p mat-line>Project A, Distribution B </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project B, Distribution C </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution R </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+              <mat-list-item>
+                <p mat-line>Project A, Distribution B </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-expansion-panel>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                  <span>Localisation Status</span>
+                  <mat-chip>1</mat-chip>
+                </div>
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <mat-list role="list">
+              <mat-list-item>
+                <p mat-line>Project A, Distribution B </p>
+                <p fxFlex="150px" fxLayoutAlign="end">15 References</p>
+              </mat-list-item>
+            </mat-list>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions fxLayoutAlign="end center">
+    <button mat-raised-button ngClass="secondary-btn" (click)="publishClick()">
+      <div fxLayout="row" fxLayoutAlign="center center">
+        <i class="mdi mdi-upload mdi-24px"></i>
+        <span>Publish</span>
+      </div>
+    </button>
+  </mat-dialog-actions>
+</div>

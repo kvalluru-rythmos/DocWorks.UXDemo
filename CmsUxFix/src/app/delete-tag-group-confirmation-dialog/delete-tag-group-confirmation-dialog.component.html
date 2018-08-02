@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+Delete Tag Group -- {{tagGroup.tagGroupName}}
+</mat-toolbar>
+
+  this page loads all the dependency projects and distributions for which the tag group is assigned.
+
+  <div fxLayout="column">
+    <div>Do you want to delete the Tag Group</div>
+  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px" fxFlexOffset="10px">
+    <button mat-raised-button color="primary" (click)="deleteTagGroup()">
+      Confirm
+    </button>
+    <button mat-raised-button color="primary" (click)="cancelDelete()">
+      Cancel
+    </button>
+  </div>
+</div>

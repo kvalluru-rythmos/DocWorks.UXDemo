@@ -1,0 +1,17 @@
+<mat-toolbar color="primary">
+  Delete Distribution -- {{distribution.distributionName}}
+</mat-toolbar>
+
+  this page loads all the nodes under this distribution.
+
+<div fxLayout="column">
+  <div>Do you want to delete the Distribution</div>
+  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px" fxFlexOffset="10px">
+    <button mat-raised-button color="primary" (click)="deleteDistribution()">
+      Confirm
+    </button>
+    <button mat-raised-button color="primary" (click)="cancelDelete()">
+      Cancel
+    </button>
+  </div>
+</div>

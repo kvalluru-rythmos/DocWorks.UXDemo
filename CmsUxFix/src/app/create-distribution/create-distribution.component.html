@@ -1,0 +1,91 @@
+<div fxLayout="column" fxFlexFill>
+  <mat-toolbar color="primary">
+    <h3 fxFlex>Add Distributions</h3>
+    <button mat-button mat-dialog-close>
+      <i class="mdi mdi-close mdi-24px"></i>
+    </button>
+  </mat-toolbar>
+  <mat-dialog-content mat-dialog-content fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="15px" fxFlex="100">
+    <h3>Available Distributions</h3>
+    <div fxLayout="column" fxLayoutGap="15px" ngClass="distribution-chip" slimScroll *ngIf="distributionsArray && distributionsArray.length>0">
+
+      <mat-chip-list>
+        <mat-chip fxLayout="column" fxFlex="150px" fxLayoutGap="10px" fxLayoutAlign="space-between stretch" *ngFor="let distribution of distributionsArray | sort: 'distributionName'">
+          <div fxLayout="row" fxLayoutAlign="space-between center" matTooltip="{{distribution.distributionName}}">
+            <strong ngClass="{{distribution.status== entityStatus.Error ?'errorEntity oneline-ellipsis':'oneline-ellipsis'}}" fxFlex>{{distribution.distributionName}}</strong>
+            <mat-spinner *ngIf="distribution.status==entityStatus.Wait||distribution.status==entityStatus.None" style="float:right;"
+                         ngClass="tag-view-loader"></mat-spinner>
+            <mat-icon *ngIf="distribution.status==entityStatus.Ok" fxFlex="20px" (click)="setSelectedDistribution(distribution)">
+              <i class="mdi mdi-pencil mdi-18px"></i>
+            </mat-icon>
+            <mat-icon *ngIf="distribution.status==entityStatus.Ok" fxFlex="20px" (click)="deleteDistribution(distribution)">
+              <i class="mdi mdi-delete mdi-18px"></i>
+            </mat-icon>
+          </div>
+          <small fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px" matTooltip="{{distribution.branchName}}">
+            <span>
+              <i class="mdi mdi-source-fork mdi-18px"></i>
+            </span>
+            <i ngClass="oneline-ellipsis">{{distribution.branchName}}</i>
+          </small>
+        </mat-chip>
+      </mat-chip-list>
+    </div>
+    <mat-divider ngClass="distribution-divider"></mat-divider>
+    <div fxLayout="column" fxLayoutGap="15px">
+      <h3>{{selectedDistribution ? 'Update Distribution' : 'Create Distribution'}} </h3>
+
+      <form [formGroup]="distributionForm" fxLayout="column" fxLayoutGap="5px">
+
+        <mat-form-field fxHide>
+          <input matInput placeholder="Distribution Id" [formControl]="distributionId">
+        </mat-form-field>
+
+        <mat-form-field>
+          <input maxlength="100" matInput placeholder="Distribution Name" required [formControl]="distributionName" [readonly]="selectedDistribution">
+          <small matSuffix>{{distributionName.value?.length || 0}}/100</small>
+          <mat-error *ngIf="distributionName.hasError('required')">Distribution name is required</mat-error>
+          <mat-error *ngIf="distributionName.hasError('minlength')"> Please enter at least 5 characters.</mat-error>
+          <mat-error *ngIf="distributionName.hasError('maxlength')"> Please enter maximum of 100 characters.</mat-error>
+          <mat-error *ngIf="distributionName.hasError('whitespace')">Leading and trailing whitespaces not allowed</mat-error>
+        </mat-form-field>
+
+        <mat-form-field [fxHide]="project.sourceControlType==sourceControlType.Mercurial">
+          <mat-select placeholder="Select Branch" [required]="project.sourceControlType==sourceControlType.GIT" [formControl]="branch" [disabled]="selectedDistribution">
+            <mat-option *ngFor="let branch of branchesArray" value="{{branch.branchName}}">{{branch.branchName}}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="branch.hasError('required')">Branch is required</mat-error>
+          <mat-progress-bar mode="indeterminate" *ngIf="isBranchDataLoadInProgress"></mat-progress-bar>
+        </mat-form-field>
+
+        <mat-form-field [fxHide]="project.sourceControlType==sourceControlType.GIT">
+          <input maxlength="100" matInput placeholder="Branch" [required]="project.sourceControlType==sourceControlType.Mercurial" [formControl]="mercurialBranch" [readonly]="selectedDistribution">
+          <mat-error *ngIf="mercurialBranch.hasError('required')">Branch is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <input maxlength="100" matInput placeholder="TOC Path" [formControl]="tocPath" (keyup)="checkValidTocPath(tocPath.value)" [readonly]="selectedDistribution">
+          <small matSuffix>{{tocPath.value?.length || 0}}/100</small>
+          <mat-error *ngIf="tocPath.hasError('maxlength')"> Please enter maximum of 100 characters.</mat-error>
+          <mat-error *ngIf="tocPath.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+        <mat-error *ngIf="!isValidToc">invalid TOC Path</mat-error>
+
+        <mat-form-field>
+          <input maxlength="1000" matInput placeholder="Description" [formControl]="description">
+          <small matSuffix>{{description.value?.length || 0}}/1000</small>
+          <mat-error *ngIf="description.hasError('maxlength')"> Please enter maximum of 1000 characters.</mat-error>
+          <mat-error *ngIf="description.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+
+        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px">
+          <button *ngIf="!selectedDistribution" mat-raised-button color="primary" (click)="createDistribution();distributionForm.reset()" [disabled]="(!distributionForm.valid || isBranchDataLoadInProgress || isDistributionDataLoadInProgress||!isValidToc)">Create Distribution</button>
+
+          <button *ngIf="selectedDistribution" mat-raised-button color="primary" (click)="updateDistribution();distributionForm.reset()" [disabled]="(!distributionForm.valid || isBranchDataLoadInProgress || isDistributionDataLoadInProgress||!isValidToc)">Update Distribution</button>
+
+          <button *ngIf="selectedDistribution" mat-raised-button color="primary" (click)="cancelUpdate();distributionForm.reset()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </mat-dialog-content>
+</div>

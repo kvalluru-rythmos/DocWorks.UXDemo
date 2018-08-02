@@ -1,0 +1,70 @@
+<div ngClass="content-body-wrapper media-wrapper" fxLayout="column" fxFlexFill fxLayoutAlign="start stretch">
+    <div ngClass="content-header docworksDarkTheme" fxLayout="column" fxFlex="60px">
+      <mat-toolbar color="primary" fxFlex="60px">
+        <div fxLayout="row" class="content-toolbar" fxFlexFill fxLayoutAlign="space-between stretch">
+          <mat-tab-group fxFlexAlign="end" (selectedTabChange)="changeAssetType($event)">
+            <mat-tab label="Images"></mat-tab>
+            <mat-tab label="Code Blocks"></mat-tab>
+          </mat-tab-group>
+          <form [formGroup]="assetSearchForm" ngClass="inner-page-search-wrapper" fxFlex="500px" fxFlexAlign="center">
+            <div fxFlex fxLayoutAlign="stretch center" fxLayoutGap="5px">
+              <div fxFlex>
+                <button mat-raised-button [matMenuTriggerFor]="menu">{{filterType==1?'Asset Id':'Asset Text'}}
+                  <i class="mdi mdi-menu-down"></i>
+                </button>
+                <mat-menu #menu="matMenu" xPosition="before" yPosition="below" [overlapTrigger]="false">
+                  <button mat-menu-item (click)="filterType=1">Asset Id</button>
+                  <button mat-menu-item (click)="filterType=2">Asset Text</button>
+                </mat-menu>
+               
+                <input type="Search" ngClass="form-control" fxFlex [formControl]="searchText" maxlength="100">
+              </div>
+              <button mat-raised-button>
+                <i class="mdi mdi-magnify mdi-24px" (click)="searchAsset()"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </mat-toolbar>
+    </div>
+  
+    <div ngClass="content-body" fxLayout="row" fxLayoutAlign="start stretch" fxFlex="100">
+      <div ngClass="content-body-left" fxLayout="column" fxLayoutAlign="start stretch" fxFlex="50">
+        <mat-tab-group (selectedTabChange)="filterAsset($event)">
+          <mat-tab label="Recently Uploaded"></mat-tab>
+          <mat-tab label="Uploaded By Me"></mat-tab>
+        </mat-tab-group>
+        <div fxLayoutAlign="start stretch" fxFlex>
+          <app-dam-drag-and-drop [viewType]="dragDropComponentViewType.uploadView" [assetData]="assetArray" (onFileSelect)="upsertAsset($event)" (onScroll)="scrolldown($event)" (getAsset)="getAssetProperties($event)"
+            [assetType]="assetType" [isDataLoading]="isLoading" [isAssetAdded]="isAssetAdded" [selectedAssetId]="selectedAssetId" fxFlex [(isAssetUploading)]="isAssetUploadInProgress"></app-dam-drag-and-drop>
+        </div>
+      </div>
+      <div ngClass="content-body-right" fxLayout="column" fxLayoutAlign="start stretch" fxFlex="50">
+        <div fxFlex>
+          <app-dam-drag-and-drop [viewType]="dragDropComponentViewType.replaceView" [assetData]="assetDetail" (onFileSelect)="upsertAsset($event)" (onScroll)="scrolldown($event)" [isDataLoading]="isAssetDetailLoading"
+            [assetType]="assetType" [selectedAssetId]="selectedAssetId" [isAssetAdded]="false" [(isAssetUploading)]="isAssetReplaceInProgress"></app-dam-drag-and-drop>
+        </div>
+  
+        <div ngClass="media-preview-header" fxLayout="row" fxLayoutAlign="space-between center" fxFlex="50px">
+          <mat-tab-group>
+            <mat-tab label="FILE INFORMATION"></mat-tab>
+            <mat-tab label="HISTORY"></mat-tab>
+          </mat-tab-group>
+          <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="start center">
+            <a href="{{assetDetail.assetContent}}" target="_blank" *ngIf="assetDetail.assetType?assetDetail.assetType.toString():'' === constAssetType.image.toString()">
+              <span>View Full Size Image</span>
+            </a>
+            <button mat-raised-button color="primary" *ngIf="assetDetail && assetDetail.assetId">
+              <div fxLayout="row" fxLayoutGap="3px" fxLayoutAlign="start center" (click)="(isAssetDetailLoading || isUpdateInProgress)?'':updateAssetData()">
+                <i class="mdi mdi-pencil mdi-18px"></i>
+                <span>{{isEditProperties?'Update':'Edit'}}</span>
+              </div>
+            </button>
+          </div>
+        </div>
+        <app-asset-properties fxLayout="column" fxFlex="100" [assetDetail]="assetDetail" [isUpdateInProgress]="isUpdateInProgress"
+          [isDataLoading]="isAssetDetailLoading" [isEditProperties]="isEditProperties" [(isAssetReplaceInProgress)]="isAssetReplaceInProgress"></app-asset-properties>
+      </div>
+  
+    </div>
+  </div>

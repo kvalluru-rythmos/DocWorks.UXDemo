@@ -1,0 +1,98 @@
+<div ngClass="batch-merge-main-wrapper" fxLayout="column" fxFlexFill>
+  <mat-toolbar ngClass="batch-merge-header" fxLayout="row" fxLayoutAlign="start center">
+    <div fxFlex="25%">
+      <h2>Compare & Merge</h2>
+    </div>
+    <div fxFlex="75%" fxLayout="row" fxLayoutAlign="start end">
+      <div fxFlex="50" *ngIf="nodeList&&nodeList.length>0" fxLayout="column">
+        <span class="merge-title">Merge from</span>
+        <div class="compare-breadcrums oneline-ellipsis">
+          {{values.destinationProject.projectName}}/{{values.destinationDistribution.distributionName}}
+          <span *ngFor="let node of selectedNode.destinationNode.destinationPathTitle.reverse()">/{{node}}
+          </span>
+        </div>
+        <mat-progress-bar mode="indeterminate" *ngIf="leftDataLoadInProgress"></mat-progress-bar>
+      </div>
+      <div fxFlex="50" *ngIf="nodeList&&nodeList.length>0" fxLayout="column" class="ml-20">
+        <span class="merge-title">Merge To</span>
+        <div class="compare-breadcrums oneline-ellipsis">
+          {{values.sourceProject.projectName}}/{{values.sourceDistribution.distributionName}}
+          <span *ngFor="let node of selectedNode.sourceNode.sourcePathTitle.reverse()">
+            /{{node}}
+          </span>
+        </div>
+        <mat-progress-bar mode="indeterminate" *ngIf="rightDataLoadInProgress"></mat-progress-bar>
+      </div>
+    </div>
+  </mat-toolbar>
+
+  <div class="batch-merge-dashboard-wrapper" fxLayout="row" fxFlex="100">
+    <div ngClass="batch-merge-dashboard-left" fxFlex="25%" fxLayout="column" fxLayoutGap="10px" [fxShow]="nodeList && nodeList.length>0">
+      <div ngClass="batch-merge-dashboard-left-header" fxLayoutAlign="space-between center">
+        <button ngClass="secondary-btn" mat-raised-button color="primary" [disabled]="selectedNodeIndex<=0" (click)="prevClick()">
+          <i class="mdi mdi-arrow-left mdi-18px"></i>
+        </button>
+        <span>{{nodeList.length}} Nodes</span>
+        <button ngClass="secondary-btn" mat-raised-button color="primary" [disabled]="selectedNodeIndex >= nodeList.length-1" (click)="nextClick()">
+          <i class="mdi mdi-arrow-right mdi-18px"></i>
+        </button>
+      </div>
+      <div class="batch-merge-avilable-nodes">
+        <div slimScroll>
+          <mat-list ngClass="batch-merge-dashboard-left-body" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="0px">
+            <mat-list-item ngClass="{{i== this.selectedNodeIndex ? 'selected-node' : ''}}" *ngFor="let node of nodeList;index as i" (click)="setSelectedNode(i)" class="cursor-pointer">
+              <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between start" fxFlex="100">
+                <div ngClass="batch-merge-node-list batch-merge-node-list-left" fxLayout="column" fxFlex="40%" fxLayoutGap="5px" fxLayoutAlign="stretch start">
+                  <div fxLayout="row" fxlayoutGap="5px">
+                    <i class="mdi mdi-file mdi-24px" fxFlex="25px"></i>
+                    <span fxFlex class="oneline-ellipsis" matTooltip="{{node.sourceNode.label}}">{{node.sourceNode.label}}</span>
+                  </div>
+                  <small class="oneline-ellipsis" matTooltip="{{values.destinationProject.projectName}}/{{values.destinationDistribution.distributionName}}">{{values.destinationProject.projectName}}/{{values.destinationDistribution.distributionName}}</small>
+                </div>
+                <div ngClass="batch-merge-node-list-center" fxLayout="column" fxFlex="20%" class="link-icon" fxLayoutAlign="start stretch">
+                  <span>
+                    <i class="mdi mdi-arrow-right-bold mdi-18px"></i>
+                  </span>
+                </div>
+                <div ngClass="batch-merge-node-list batch-merge-node-list-right" fxLayout="column" fxFlex="40%" fxLayoutGap="5px" fxLayoutAlign="stretch start">
+                  <div fxLayout="row" fxlayoutGap="5px">
+                    <i class="mdi mdi-file mdi-24px"></i>
+                    <span class="oneline-ellipsis" matTooltip="{{node.destinationNode.label}}">{{node.destinationNode.label}}</span>
+                  </div>
+                  <small class="oneline-ellipsis" matTooltip="{{values.sourceProject.projectName}}/{{values.sourceDistribution.distributionName}}">{{values.sourceProject.projectName}}/{{values.sourceDistribution.distributionName}}</small>
+
+                </div>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+      <div fxLayoutGap="10px" fxLayoutAlign="end" class="import-button">
+        <button ngClass="secondary-btn" mat-raised-button (click)="skipFile()">Skip File</button>
+        <button mat-raised-button color="accent" (click)="finish()">Finish</button>
+      </div>
+    </div>
+    <div ngClass="batch-merge-dashboard-right" fxFlex="75%">
+      <div fxLayout="column" *ngIf="nodeList&&nodeList.length>0" fxFlexFill>
+        <div fxLayout="row" fxLayoutAlign="start end" class="p-10 pb-0">
+          <div fxFlex="50">
+            <mat-select placeholder="Select Draft" class="merge-draft-dropdown" (change)="onSourceNodeDraftChange()" [formControl]="sourceNodeDraft">
+              <mat-option *ngFor="let draft of sourceNodeDraftList" [value]="draft">{{draft.draftName}}</mat-option>
+            </mat-select>
+          </div>
+          <div fxFlex="50">
+            <mat-select placeholder="Select Draft" class="ml-20 merge-draft-dropdown" (change)="onDestinationNodeDraftChange()" [formControl]="destinationNodeDraft">
+              <mat-option *ngFor="let draft of destinationNodeDraftList" [value]="draft">{{draft.draftName}}</mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div fxFlexFill fxLayout="row" fxFlex="100" class="p-10">
+          <iframe [src]="mergelyUrl" id="mergely-iframe" width="100%" scrolling="no" class="mergely-iframe" seamless="seamless" fxFlexFill></iframe>
+        </div>
+        <div *ngIf="!nodeList|| nodeList.length<1" class="p-10">
+          No nodes available
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,91 @@
+<html lang="en">
+
+<head>
+  <title></title>
+  <link href="http://fonts.googleapis.com/css?family=Noto+Sans:400,700" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" media="all" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.css" />
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S"
+    crossorigin="anonymous">
+  <link rel="stylesheet" media="all" href="/assets/mergely/mergely.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/addon/search/searchcursor.min.js"></script>
+  <script src="/assets/mergely/mergely.js" type="text/javascript"></script>
+  <script src="/assets/mergely/editor.js" type="text/javascript"></script>
+</head>
+
+<body>
+  <div class="mergely-icons">
+    <div class="mergely-left">
+      <div class="dropdown">
+        <button onclick="openOptions('lhsOption')" class="mergely-button-primary mr-5">Options
+          <i class="fa fa-cog"></i>
+        </button>
+        <div id="lhsOption" class="dropdown-content">
+          <span onclick="handleOperation('undo-left')" title="Undo">
+            <i class="icon fa fa-undo"></i> Undo</span>
+          <span onclick="handleOperation('redo-left')" title="Redo">
+            <i class="icon fa fa-redo"></i> Redo</span>
+          <span onclick="handleOperation('left-read-only')" id="left-read-only" title="Read Only">
+            <i class="icon fa fa-eye-slash"></i> Read Only</span>
+          <span onclick="handleOperation('edit-left-merge-right-file')" title="Merge File Right">
+            <i class="icon fa fa-arrow-right"></i> Merge File Right</span>
+          <span onclick="handleOperation('lhs-search')" title="Search">
+            <i class="icon fa fa-search"></i> Find</span>
+        </div>
+      </div>
+      <button id="left-save-Draft" onclick="handleOperation('save-left-content')" class="mergely-button-primary mr-5">
+        Save as New Draft
+      </button>
+      <div id="search-left" class="hidden">
+        <input type="text" id="lhs-search-text" class="mergely-textbox">
+        <i class="icon fa fa-search search-manual" onclick="handleOperation('lhs-search-next')"></i>
+        </span>
+        <i class="icon fa fa-arrow-right" onclick="handleOperation('lhs-search-next')" title="Search-Next"></i>
+        <i class="icon fa fa-arrow-left" onclick="handleOperation('lhs-search-previous')" title="Search-Previous"></i>
+        <i class="icon fa fa-window-close" onclick="handleOperation('lhs-search-close')" title="Close Search"></i>
+      </div>
+    </div>
+    <div class="mergely-center">
+      <span class="icon fa fa-chevron-up" onclick="handleOperation('prev')" title="Previous Change"></span>
+      <span class="icon fa fa-chevron-down" onclick="handleOperation('next')" title="Next Change"></span>
+      <span class="icon fa fa-backward" onclick="handleOperation('change-left')" title="Merge Change Left"></span>
+      <span class="icon fa fa-forward" onclick="handleOperation('change-right')" title="Merge Change Right"></span>
+      <span class="icon icon-swap" onclick="handleOperation('swap')" title="Swap"></span>
+      <span class="icon fa fa-outdent" onclick="handleOperation('wrap')" title="Toggle line wrapping"></span>
+    </div>
+    <div class="mergely-right">
+      <div id="search-right" class="hidden">
+        <input type="text" id="rhs-search-text" class="mergely-textbox">
+        <i class="icon fa fa-search search-manual" onclick="handleOperation('rhs-search-next')"></i>
+        </span>
+        <i class="icon fa fa-arrow-right" onclick="handleOperation('rhs-search-next')" title="Search-Next"></i>
+        <i class="icon fa fa-arrow-left" onclick="handleOperation('rhs-search-previous')" title="Search-Previous"></i>
+        <i class="icon fa fa-window-close" onclick="handleOperation('rhs-search-close')" title="Close Search"></i>
+      </div>
+      <button id="right-save-Draft" onclick="handleOperation('save-right-content')" class="mergely-button-primary mr-5">
+        Save as New Draft
+      </button>
+      <div class="dropdown">
+        <button onclick="openOptions('rhsOption')" class="mergely-button-primary">Options
+          <i class="fa fa-cog"></i>
+        </button>
+        <div id="rhsOption" class="dropdown-content right">
+          <span onclick="handleOperation('undo-right')" title="Undo">
+            <i class="icon fa fa-undo" title="Undo"></i> Undo</span>
+          <span onclick="handleOperation('redo-right')" title="Redo">
+            <i class="icon fa fa-redo" title="Redo"></i> Redo</span>
+          <span onclick="handleOperation('right-read-only')" id="right-read-only" title="Read Only">
+            <i class="icon fa fa-eye-slash" title="Read Only"></i> Read Only</span>
+          <span onclick="handleOperation('edit-right-merge-left-file')" title="Merge File Left">
+            <i class="icon fa fa-arrow-left" title="Merge File Left"></i> Merge File Left</span>
+          <span onclick="handleOperation('rhs-search')" title="Find">
+            <i class="icon fa fa-search" title="Search"></i> Find</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="mergely"></div>
+</body>
+
+</html>

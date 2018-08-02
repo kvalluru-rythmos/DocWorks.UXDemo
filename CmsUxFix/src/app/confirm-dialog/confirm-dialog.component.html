@@ -1,0 +1,16 @@
+<div fxLayout="column">
+  <mat-toolbar color="primary">
+    <h3 fxFlex>Confirm Message</h3>
+    <button mat-button mat-dialog-close><i class="mdi mdi-close mdi-24px"></i></button>
+  </mat-toolbar>
+  <mat-dialog-content mat-dialog-content fxLayout="column" fxLayoutAlign="end center" fxFlex="70px">
+    <div [innerHTML]="message  |sanitizeHtml"></div>
+  </mat-dialog-content>
+  <mat-dialog-actions fxFlexFill fxLayoutAlign="center center" *ngIf="showButton">
+    <div class="button-row" fxFlexAlign="center">
+      <button mat-raised-button color="primary" (click)="confirm()">{{buttonText}}</button>
+
+      <button mat-button mat-dialog-close color="primary">Close</button>
+    </div>
+  </mat-dialog-actions>
+</div>

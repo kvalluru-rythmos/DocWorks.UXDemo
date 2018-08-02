@@ -1,0 +1,16 @@
+<div ngClass="content-body-wrapper system-wrapper" fxLayout="column" fxFlexFill fxLayoutAlign="start stretch">
+  <div ngClass="content-header docworksDarkTheme" fxLayout="column" fxFlex="60px">
+    <mat-toolbar color="primary" fxFlex="60px">
+      <div ngClass="content-toolbar" fxLayout="row" fxFlexFill fxLayoutAlign="space-between stretch">
+        <mat-tab-group fxFlexAlign="end" (selectedIndexChange)="selectedTabIndex=$event" [selectedIndex]="selectedTabIndex">
+          <mat-tab label="Tag Groups"></mat-tab>
+          <mat-tab label="System Admins"></mat-tab>
+        </mat-tab-group>
+      </div>
+    </mat-toolbar>
+  </div>
+  <app-tag-group-dashboard [fxHide]="selectedTabIndex!=0" [selectedTabIndex]="selectedTabIndex" fxFlex>
+  </app-tag-group-dashboard>
+  <app-manage-system-admins [fxHide]="selectedTabIndex!=1" [selectedTabIndex]="selectedTabIndex" fxFlex>
+  </app-manage-system-admins>
+</div>

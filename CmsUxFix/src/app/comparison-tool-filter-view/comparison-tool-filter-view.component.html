@@ -1,0 +1,40 @@
+<form [formGroup]="comparisonFilterForm" fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start stretch">
+  <mat-form-field fxFlex="25%">
+    <mat-select placeholder="Select Project" [formControl]="project" (change)="selectedProjectId=project.value; getDistributions()">
+      <mat-option *ngFor="let item of projectList | sort: 'projectName' " [value]="item._id"> {{ item.projectName }}</mat-option>
+    </mat-select>
+    <mat-progress-bar mode="indeterminate" *ngIf="isProjectLoading"></mat-progress-bar>
+  </mat-form-field>
+  <mat-form-field fxFlex="25%">
+    <mat-select placeholder="Select Distribution" [formControl]="distribution" [disabled]="!selectedProjectId" (change)="selectedDistributionId=distribution.value; requestTree()">
+      <mat-option *ngFor="let item of distributionList | sort: 'distributionName'" [value]="item.distributionId"> {{ item.distributionName }}</mat-option>
+    </mat-select>
+    <mat-progress-bar mode="indeterminate" *ngIf="isDistributionLoading"></mat-progress-bar>
+  </mat-form-field>
+  <div fxFlex="25%" class="comparision-node">
+    <span class="comparision-node-select oneline-ellipsis" [matMenuTriggerFor]="treeView">
+      {{getSelectedNodeName()}}
+      <i class="mdi mdi-menu-down"></i>
+    </span>
+
+    <mat-menu #treeView="matMenu" [fxHide]="filteredNodes.length<=0" class="comparision-treeview" (click)="$event.stopPropagation()">
+      <div class="tree-search m-5" [fxHide]="filteredNodes.length<=0" fxLayout="row" fxLayoutAlign="space-between center" fxFlex
+           (click)="$event.stopPropagation()">
+        <span fxFlex ngClass="custom-form-field" fxLayoutAlign="space-between center">
+          <input type="search" fxFlex [formControl]="searchText" (keyup)="searchTree()" placeholder="Search ..." />
+          <i class="mdi mdi-magnify mdi-24px" (click)="searchTree()"></i>
+        </span>
+      </div>
+      <p-tree (click)="$event.stopPropagation()" [value]="filteredNodes" [fxHide]="filteredNodes.length<=0" selectionMode="single"
+              [(selection)]="selectedFiles" (onNodeSelect)="nodeSelect($event)"></p-tree>
+    </mat-menu>
+    <mat-progress-bar mode="indeterminate" *ngIf="isTreeViewLoading"></mat-progress-bar>
+  </div>
+  <mat-form-field fxFlex="25%">
+    <mat-select placeholder="Select Draft" [formControl]="draft" [disabled]="!selectedNodeId" (change)="selectedDraftId=draft.value; getDraftMDContent()">
+      <mat-option *ngFor="let item of draftList" [value]="item.draftId"> {{ item.draftName }}</mat-option>
+    </mat-select>
+    <mat-progress-bar mode="indeterminate" *ngIf="isDraftLoading"></mat-progress-bar>
+  </mat-form-field>
+</form>
+<mat-progress-bar mode="indeterminate" *ngIf="isMdContentLoading"></mat-progress-bar>

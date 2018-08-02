@@ -1,0 +1,16 @@
+<div fxLayout.lt-md="column" fxLayout.lt-xl="row" ngClass="dashboard-wrapper">
+  <div fxFlex.lt-md="100%" fxFlex="70%" fxFlex.md="62%" ngClass="dashboard-left">
+    <app-project-list></app-project-list>
+  </div>
+
+  <div fxFlex.lt-md="100%" fxFlex="30%" fxFlex.md="38%" fxLayout="column" fxLayoutGap='15px'>
+    <div fxLayout="column" fxLayoutGap="15px" ngClass="dashboard-right">
+      <mat-list fxLayout="column">
+        <app-realtime-updates></app-realtime-updates>
+      </mat-list>
+      <mat-list fxLayout="column" ngClass="recently-view-documents">
+        <app-recently-viewed-document></app-recently-viewed-document>
+      </mat-list>
+    </div>
+  </div>
+</div>

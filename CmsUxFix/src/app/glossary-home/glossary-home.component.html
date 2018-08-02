@@ -1,0 +1,75 @@
+<div ngClass="glossary-wrapper" fxFlex fxLayout="row"  fxFlexOffset="50px">
+  <div ngClass="content-body" fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="15px" fxFlex>
+    <mat-list fxLayout="column" fxFlex="100" fxLayoutAlign="start stretch">
+      <div ngClass="content-title">
+        <mat-toolbar fxLayout="row" fxLayoutAlign="start center">
+          <div fxFlex="150px">
+            <mat-form-field ngClass="custom-input-field custom-select-field" floatPlaceholder="never">
+              <mat-select placeholder="Filter by">
+                <mat-option *ngFor="let glossaryFilter of glossaryFilters" value="glossaryFilter">
+                  {{ glossaryFilter }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div ngClass="inner-page-search-wrapper" fxLayout="row" fxLayoutAlign="end" fxFlex fxFlexOffset="30px">
+            <div fxFlex fxLayoutAlign="stretch center" fxFlexOffset="10px">
+              <input type="Search" ngClass="form-control" [(ngModel)]="searchString" placeholder="Type to Search" fxFlex>
+            </div>
+          </div>
+          <div fxLayoutAlign="end" fxFlexOffset="20px">
+            <button mat-raised-button color="primary" (click)="addGlossaryDialog()"><i class="mdi mdi-plus"></i> ADD GLOSSARY</button>
+          </div>
+        </mat-toolbar>
+      </div>
+      <h3 matSubheader fxLayout="row" fxLayoutAlign="center center" fxFlex="50px">
+        <span fxFlex="20%" fxLayoutAlign="center">Term</span>
+        <span fxFlex="20%" fxLayoutAlign="center">Type</span>
+        <span fxFlex="15%" fxLayoutAlign="center">Pages in use</span>
+        <span fxFlex="20%" fxLayoutAlign="center">Tags</span>
+        <span fxFlex="18%" fxLayoutAlign="center">Last updated by </span>
+        <div fxFlex="7%" fxLayoutAlign="center">&nbsp;</div>
+      </h3>
+      <div fxLayout="column" fxLayoutAlign="start stretch" fxFlexFill>
+        <div slimScroll style="height: 40vh">
+          <div *ngFor="let value of glossaryList">
+            <mat-list-item>
+              <div fxLayout="row" fxFlex fxLayoutAlign="start center">
+                <span fxFlex="20%" fxLayoutAlign="center">{{value.term}}</span>
+                <span fxFlex="20%" fxLayoutAlign="center">{{value.type}}</span>
+                <span fxFlex="15%" fxLayoutAlign="center">{{value.pagesInUse}}</span>
+                <span fxFlex="20%" fxLayoutAlign="center">
+                  <mat-chip-list>
+                    <mat-chip [ngStyle]="{'background-color': value.tags[0].color}">{{value.tags[0].tagName}}</mat-chip>
+                    <div ngClass="more-glossary-tags-wrapper">
+                      <mat-chip ngClass="more-glossary-tags">+{{value.tags.length-1}}</mat-chip>
+                      <div ngClass="dropdown-more-glossary-tags">
+                        <div slimScroll ngClass="dropdown-more-glossary-tags-scroll">
+                          <div *ngFor="let tag of value.tags|slice:1"><mat-chip [ngStyle]="{'background-color': tag.color}">{{tag.tagName}}</mat-chip></div>
+                        </div>
+                      </div>
+                    </div>
+                  </mat-chip-list>
+                </span>
+                <span fxFlex="18%" fxLayoutAlign="center"><strong>{{value.lastupdatedbyname}}</strong> <small>({{value.lastupdatedbydate}})</small></span>
+                <span fxFlex="7%" fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="10px">
+                  <mat-icon fxLayoutAlign="center">
+                    <i class="mdi mdi-open-in-new mdi-24px cursor-pointer"></i>
+                  </mat-icon>
+                  <mat-icon fxLayoutAlign="center">
+                    <i class="mdi mdi-dots-vertical mdi-24px cursor-pointer" [matMenuTriggerFor]="manageEditTagsNterms"></i>
+                  </mat-icon>
+                  <mat-menu #manageEditTagsNterms="matMenu">
+                    <button mat-menu-item>Edit Term</button>
+                    <button mat-menu-item>Manage Tags</button>
+                    <button mat-menu-item>Delete Term</button>
+                  </mat-menu>
+                </span>
+              </div>
+            </mat-list-item>
+          </div>
+        </div>
+      </div>
+    </mat-list>
+  </div>
+</div>

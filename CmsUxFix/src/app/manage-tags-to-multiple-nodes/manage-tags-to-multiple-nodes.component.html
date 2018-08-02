@@ -1,0 +1,82 @@
+<div ngClass="assign-tags-wrapper" fxLayout="column">
+  <mat-toolbar color="primary">
+    <h3 fxFlex>  {{operation===multipleNodesTaggingOperation.AddTags?'Add tags to multiple nodes':'Remove tags from multiple nodes'}} </h3>
+    <button mat-button mat-dialog-close><i class="mdi mdi-close mdi-24px"></i></button>
+  </mat-toolbar>
+  <mat-dialog-content fxLayout="column" fxLayoutGap="15px">
+    <div ngClass="custom-mat-input-wrapper" fxLayout="row" fxLayoutAlign="start start" fxFlex="40px">
+      <i class="mat-prefix mdi mdi-magnify mdi-24px"></i>
+      <input type="search" ngClass="form-control" placeholder="Search Tags" fxFlex [(ngModel)]="searchString">
+    </div>
+    <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="10px" fxFlexFill>
+      <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="30px">
+        <h2 fxFlex="50">Available Tags</h2>
+        <h2 fxFlex="50">Assigned Tags</h2>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="30px">
+        <mat-card fxFlex="50">
+          <div slimScroll class="manage-project-tag-group">
+            <mat-accordion ngClass="custom-mat-accordion" *ngFor="let tagGroup of availableTagGroups  | filterTags:  searchString">
+              <mat-expansion-panel [expanded]="true" *ngIf="!tagGroup.isSystemManaged && tagGroup.tagGroupType===tagGroupType.OtherTagGroup">
+                <mat-expansion-panel-header ngClass="p-1" collapsedHeight="40px" expandedHeight="40px">
+                  <mat-panel-title fxFlex>
+                    <div fxLayout="row" fxLayoutAlign="space-between stretch" fxFlex>
+                      <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                        <i [ngStyle]="{'color': tagGroup.colour}" class="mdi mdi-tag mdi-18px"></i>
+                        <span>{{tagGroup.tagGroupName}} {{tagGroup.limitToOne ? '(Limit to One)':''}}</span>
+                      </div>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div fxLayout="column" *ngIf="tagGroup.tagGroupType===tagGroupType.OtherTagGroup">
+                  <mat-chip-list ngClass="mat-chip-list-stacked" aria-orientation="vertical">
+                    <mat-chip *ngFor="let tag of tagGroup.tags" [ngStyle]="{'background-color': tagGroup.colour }" selected="true" fxLayout="row"
+                              fxLayoutGap="5px" fxLayoutAlign="start center">
+                      <span>{{tag.tagName}}</span>
+                      <i *ngIf="checkLimitToOne(tagGroup)" (click)="addTag(tag,tagGroup)"
+                         class="mdi mdi-plus-circle mdi-18px" fxLayoutAlign="end"></i>
+                    </mat-chip>
+                  </mat-chip-list>
+                </div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-card>
+        <mat-card fxFlex="50">
+          <div slimScroll class="manage-project-tag-group">
+            <mat-accordion ngClass="custom-mat-accordion" *ngFor="let tagGroup of assignedTagGroups | filterTags:  searchString">
+              <mat-expansion-panel [expanded]="true" *ngIf="!tagGroup.isSystemManaged && tagGroup.tagGroupType===tagGroupType.OtherTagGroup">
+                <mat-expansion-panel-header ngClass="p-1" collapsedHeight="40px" expandedHeight="40px">
+                  <mat-panel-title fxFlex>
+                    <div fxLayout="row" fxLayoutAlign="space-between stretch" fxFlex>
+                      <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                        <i [ngStyle]="{'color': tagGroup.colour}" class="mdi mdi-tag mdi-18px"></i>
+                        <span>{{tagGroup.tagGroupName}}</span>
+                      </div>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-chip-list ngClass="mat-chip-list-stacked" aria-orientation="vertical" *ngIf="tagGroup.tagGroupType===tagGroupType.OtherTagGroup">
+                  <mat-chip *ngFor="let tag of tagGroup.tags" [ngStyle]="{'background-color': tagGroup.colour }" selected="true" fxLayout="row"
+                            fxLayoutGap="5px" fxLayoutAlign="start center">
+                    <span>{{tag.tagName}}</span>
+                    <i (click)="removeTag(tag,tagGroup)" class="mdi mdi-close-circle mdi-18px"
+                       fxLayoutAlign="end"></i>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+
+    <div fxLayout="column">
+      <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px" fxFlexOffset="10px">
+               <button  mat-raised-button color="primary" (click)="addOrRemoveTags()">
+          SUBMIT
+        </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+</div>

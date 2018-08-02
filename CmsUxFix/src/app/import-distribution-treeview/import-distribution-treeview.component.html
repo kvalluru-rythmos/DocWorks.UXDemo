@@ -1,0 +1,106 @@
+<div fxLayout="row" fxLayoutGap="2%" fxFlexFill>
+  <div fxFlex="49" fxLayout="column" fxFlexFill>
+    <div class="distribution-treeview-filter-wrapper" fxLayout="column" fxFlexFill>
+      <h3 fxFlex="25px">Import To</h3>
+      <form [formGroup]="sourceTreeViewFilterForm" fxLayout="column" fxFlex="100">
+        <div fxLayout="row" fxLayoutGap="10px">
+          <mat-form-field>
+            <mat-select placeholder="Select Project" [formControl]="sourceProject" (change)="getDistributions(true)">
+              <mat-option *ngFor="let item of projectList | sort: 'projectName'" [value]="item._id"> {{ item.projectName }}</mat-option>
+            </mat-select>
+            <mat-progress-bar mode="indeterminate" *ngIf="isProjectLoading"></mat-progress-bar>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Select Distribution" [formControl]="sourceDistribution" (change)="requestTree(true)">
+              <mat-option *ngFor="let item of sourceDistributionList | sort: 'distributionName'" [value]="item.distributionId"> {{ item.distributionName }}</mat-option>
+            </mat-select>
+            <mat-progress-bar mode="indeterminate" *ngIf="sourceIsDistributionLoading"></mat-progress-bar>
+          </mat-form-field>
+        </div>
+        <div class="tree-search" fxLayout="row" fxLayoutAlign="space-between center" fxFlex="40px">
+          <span ngClass="custom-form-field" fxLayoutAlign="space-between center" fxFlex="100%">
+            <input type="search" [formControl]="sourceSearchText" fxFlex="100%" (keyup)="searchTree(true)" placeholder="Search" />
+            <i class="mdi mdi-magnify mdi-24px cursor-pointer"></i>
+          </span>
+          <span ngClass="cursor-pointer" (click)="(sourceProject.value && sourceDistribution.value)?filterNodesDialog(true):''" fxFlex="20px"
+            fxFlexOffset="10px">
+            <i fxFlex class="mdi mdi-tune mdi-24px"></i>
+          </span>
+          <mat-checkbox *ngIf="(destinationProject.value && destinationDistribution.value)" fxFlexOffset="10px" [(ngModel)]="isAllSelected"
+            [ngModelOptions]="{standalone: true}" (change)="checkUncheckAllNodes(isAllSelected)" class="node-checkbox"></mat-checkbox>
+        </div>
+        <mat-progress-bar mode="indeterminate" *ngIf="sourceIsTreeViewLoading"></mat-progress-bar>
+        <div fxLayout="column" fxFlex="100" ngClass="{{(sourceProject.value && sourceDistribution.value)?'':'treeview-border'}}">
+          <div *ngIf="!(sourceProject.value && sourceDistribution.value)" fxLayout="row" fxLayoutAlign="center center" fxFlexFill>
+            <h4> Select Project & Distribution above</h4>
+          </div>
+          <div class="horizontial-scroll" [fxHide]="!(sourceProject.value && sourceDistribution.value)" slimScroll fxLayout="row" fxLayoutAlign="flex-start start"
+            fxFlexFill>
+            <p-tree fxFlexFill #sourceDistributionTree [value]="sourceFilteredNodes" [fxHide]="sourceFilteredNodes.length<=0" droppableNodes="true"
+              (onNodeDrop)="onDropNode($event)">
+              <ng-template let-node pTemplate="default" width="100%">
+                <span>{{node.label}} </span>
+                <mat-checkbox [(ngModel)]="node.isChecked" [ngModelOptions]="{standalone: true}" *ngIf="!node.manuallyMatched && (destinationProject.value && destinationDistribution.value)"
+                  (click)="node.isChecked=!node.isChecked; findMatchedNode(node)" class="node-checkbox" ngClass="{{node.isChecked ? (node.isMatched||node.manuallyMatched?'checkbox-node-matched':'checkbox-node-notmatched'):''}}">
+                  <b>{{node.isChecked ? (node.manuallyMatched?'Manually Matched': (node.isMatched?'Match Found':'Match Not Found')):''}}</b>
+                </mat-checkbox>
+              </ng-template>
+            </p-tree>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div fxFlex="49" fxLayout="column" fxFlexFill>
+    <div class="distribution-treeview-filter-wrapper" fxLayout="column" fxFlexFill>
+      <h3 fxFlex="25px">Import From</h3>
+      <form [formGroup]="destinationTreeViewFilterForm" fxLayout="column" fxFlex="100">
+        <div fxLayout="row" fxLayoutGap="10px">
+          <mat-form-field>
+            <mat-select placeholder="Select Project" [formControl]="destinationProject" (change)="getDistributions(false)">
+              <mat-option *ngFor="let item of projectList | sort: 'projectName'" [value]="item._id"> {{ item.projectName }}</mat-option>
+            </mat-select>
+            <mat-progress-bar mode="indeterminate" *ngIf="isProjectLoading"></mat-progress-bar>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-select placeholder="Select Distribution" [formControl]="destinationDistribution" (change)="requestTree(false)">
+              <mat-option *ngFor="let item of destinationDistributionList | sort: 'distributionName'" [value]="item.distributionId"> {{ item.distributionName }}</mat-option>
+            </mat-select>
+            <mat-progress-bar mode="indeterminate" *ngIf="destinationIsDistributionLoading"></mat-progress-bar>
+          </mat-form-field>
+        </div>
+        <div class="tree-search" fxLayout="row" fxLayoutAlign="space-between center" fxFlex="40px">
+          <span ngClass="custom-form-field" fxLayoutAlign="space-between center" fxFlex="100%">
+            <input type="search" [formControl]="destinationSearchText" fxFlex="100%" (keyup)="searchTree(false)" placeholder="Search"
+            />
+            <i class="mdi mdi-magnify mdi-24px cursor-pointer"></i>
+          </span>
+          <span ngClass="cursor-pointer" (click)="(destinationProject.value && destinationDistribution.value)?filterNodesDialog(false):''"
+            fxFlex="20px" fxFlexOffset="10px">
+            <i fxFlex class="mdi mdi-tune mdi-24px"></i>
+          </span>
+        </div>
+        <mat-progress-bar mode="indeterminate" *ngIf="destinationIsTreeViewLoading"></mat-progress-bar>
+        <div fxLayout="column" fxFlex="100" ngClass="{{(destinationProject.value && destinationDistribution.value)?'':'treeview-border'}}">
+          <div *ngIf="!(destinationProject.value && destinationDistribution.value)" fxLayout="row" fxLayoutAlign="center center" fxFlexFill>
+            <h4> Select Project & Distribution above</h4>
+          </div>
+          <div [fxHide]="!(destinationProject.value && destinationDistribution.value)" slimScroll fxLayout="row" fxLayoutAlign="flex-start start"
+            fxFlexFill>
+            <p-tree class="horizontial-scroll" fxFlexFill #destinationDistributionTree [value]="destinationFilteredNodes" [fxHide]="destinationFilteredNodes.length<=0"
+              draggableNodes="true" fxFlex="100">
+              <ng-template let-node pTemplate="default" width="100%">
+                <span>{{node.label}} </span>
+                <span *ngIf="node.isMatched || node.manuallyMatched" class="node-matched">
+                  <i class="mdi mdi-checkbox-marked-circle"></i>
+                  {{node.isMatched?'Matched':(node.manuallyMatched?'Manually Matched':'')}}
+                </span>
+              </ng-template>
+            </p-tree>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

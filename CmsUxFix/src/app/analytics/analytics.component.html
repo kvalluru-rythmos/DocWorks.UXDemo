@@ -1,0 +1,32 @@
+<div fxLayout="row" fxLayoutGap="10px" class="analytics-wrapper">
+  <div fxFlex="20%" class="analytics-menu">
+    <mat-accordion>
+      <mat-expansion-panel routerLinkActive #rla="routerLinkActive" routerLink="/analytics" [expanded]="rla.isActive">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+              <i class="mdi mdi-chart-bar mdi-24px mr-10"></i> Analytics
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="child-menu cursor-pointer" routerLinkActive #rla="routerLinkActive" routerLink="/analytics/metrics" ngClass="{{rla.isActive?'active':''}}">Metrics</div>
+        <div class="child-menu cursor-pointer">Live Health</div>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+              <i class="mdi mdi-speedometer mdi-24px mr-10"></i> Performance Reporting
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+              <i class="mdi mdi-account mdi-24px mr-10"></i> User Behaviour
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div fxFlex="80%">
+    <router-outlet></router-outlet>
+  </div>
+</div>

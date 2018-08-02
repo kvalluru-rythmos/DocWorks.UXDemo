@@ -1,0 +1,10 @@
+<div ngClass="validation-error-dialog">
+  <mat-toolbar color="primary">
+    <h3 fxFlex>Error Log</h3>
+    <button mat-button mat-dialog-close><i class="mdi mdi-close mdi-24px"></i></button>
+  </mat-toolbar>
+  <div fxLayout="column" fxLayoutGap="1px">
+    <div ngClass="oneline-ellipsis error" *ngFor="let asset of failedAssets"><i class="mdi mdi-close-circle mdi-18px"></i>asset "{{asset.assetId}}" is invalid</div>
+   
+  </div>
+</div>

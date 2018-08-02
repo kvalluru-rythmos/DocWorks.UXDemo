@@ -1,0 +1,14 @@
+<div fxLayout="column">
+    <mat-toolbar color="primary">
+      <h3 fxFlex>Confirm Message</h3>
+    </mat-toolbar>
+    <mat-dialog-content mat-dialog-content fxLayout="column" fxLayoutAlign="end center" fxFlex="70px">
+        <h3>Are you sure you want to replace?</h3>
+    </mat-dialog-content>
+    <mat-dialog-actions fxFlexFill fxLayoutAlign="center center">
+        <div class="button-row" fxFlexAlign="center">
+          <button mat-raised-button mat-dialog-close>CANCEL</button>
+          <button mat-raised-button color="primary" (click)="replaceAsset()">REPLACE</button>
+      </div>
+    </mat-dialog-actions>
+  </div>

@@ -1,0 +1,73 @@
+<div fxLayout="column" class="add-project-wrapper">
+  <mat-toolbar color="primary">
+    <h3 fxFlex>Create New Project</h3>
+    <button mat-button mat-dialog-close>
+      <i class="mdi mdi-close mdi-24px"></i>
+    </button>
+  </mat-toolbar>
+  <mat-dialog-content mat-dialog-content fxLayout="column" fxFlexFill>
+    <form [formGroup]="projectForm" fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="start stretch">
+      <mat-form-field>
+        <input maxlength="100" matInput placeholder="Project Title" required [formControl]="projectTitle">
+        <small matSuffix>{{projectTitle.value?.length || 0}}/100</small>
+        <mat-error *ngIf="projectTitle.hasError('required')">Project Title is required</mat-error>
+        <mat-error *ngIf="projectTitle.hasError('minlength')">Please enter at least 5 characters</mat-error>
+        <mat-error *ngIf="projectTitle.hasError('maxlength')">Please enter maximum of 100 characters</mat-error>
+        <mat-error *ngIf="projectTitle.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Type of Content" required [formControl]="typeOfContent">
+          <mat-option *ngFor="let item of typeOfContentArray" [value]="item.key"> {{ item.value }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="typeOfContent.hasError('required')">Type Of Content is required</mat-error>
+        <mat-progress-bar mode="indeterminate" *ngIf="isContentDataLoadInProgress"></mat-progress-bar>
+      </mat-form-field>
+
+
+      <mat-form-field>
+        <mat-select placeholder="Source Control Provider" required [formControl]="sourceControlProviderType" (change)="sourceControlProviderChange()">
+          <mat-option *ngFor="let provider of sourceControlProvidersArray" [value]="provider"> {{provider.providerName}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="sourceControlProviderType.hasError('required')">Source Control provider is required</mat-error>
+      </mat-form-field>
+
+      <mat-form-field [fxHide]="sourceControlProviderType.value.sourceControlType==sourceControlTypes.Mercurial">
+        <mat-select placeholder="Repository" [required]="sourceControlProviderType.value.sourceControlType==sourceControlTypes.GIT" [formControl]="repoUrl">
+          <mat-option *ngFor="let item of repositoriesArray" [value]="item"> {{ item.cloneUrl | repoName}}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="repoUrl.hasError('required')">Repository is required</mat-error>
+        <mat-progress-bar mode="indeterminate" *ngIf="isRepoURLDataLoadInProgress"></mat-progress-bar>
+      </mat-form-field>
+
+      <mat-form-field [fxHide]="sourceControlProviderType.value.sourceControlType==sourceControlTypes.GIT">
+        <input maxlength="100" matInput placeholder="Mercurial Repo Path" [required]="sourceControlProviderType.value.sourceControlType==sourceControlTypes.Mercurial" [formControl]="mercurialRepoPath">
+        <small matSuffix>{{mercurialRepoPath.value?.length || 0}}/100</small>
+        <mat-error *ngIf="mercurialRepoPath.hasError('maxlength')">Please enter maximum of 100 characters</mat-error>
+        <mat-error *ngIf="mercurialRepoPath.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <input maxlength="100" matInput placeholder="Published Path" required [formControl]="publishedPath">
+        <small matSuffix>{{publishedPath.value?.length || 0}}/100</small>
+        <mat-error *ngIf="publishedPath.hasError('required')">Published Path is required</mat-error>
+        <mat-error *ngIf="publishedPath.hasError('minlength')">Please enter at least 5 characters</mat-error>
+        <mat-error *ngIf="publishedPath.hasError('maxlength')">Please enter maximum of 100 characters</mat-error>
+        <mat-error *ngIf="publishedPath.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <textarea maxlength="1000" matInput placeholder="Description" [formControl]="description"></textarea>
+        <small matSuffix>{{description.value?.length || 0}}/1000</small>
+        <mat-error *ngIf="description.hasError('maxlength')">Please enter maximum of 1000 characters</mat-error>
+        <mat-error *ngIf="description.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+      </mat-form-field>
+
+      <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px"  [fxHide]="!isOperationAllowed([cmsOperations.CreateProject])" >
+        <button mat-raised-button color="primary" [disabled]="!projectForm.valid" (click)="addProject();" class="btn">
+          Create Project
+        </button>
+      </div>
+    </form>
+  </mat-dialog-content>
+</div>
