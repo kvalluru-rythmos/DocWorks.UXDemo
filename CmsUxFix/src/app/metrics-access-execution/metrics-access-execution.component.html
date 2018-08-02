@@ -1,8 +1,0 @@
-<p-chart fxFlex="80%" class="content-chart" type="line" [fxShow]="graphType===1" [data]="executionMetrics" width="55vw"></p-chart>
-<p-chart fxFlex="80%" class="content-chart" type="bar" [fxShow]="graphType===2" [data]="executionMetrics" width="55vw"></p-chart>
-<div fxFlex="20%" fxLayout="column" fxLayoutGap="10px">
-  <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="10px" class="mt-10 mr-10 metrics-icons">
-    <i class="mdi mdi-chart-bar  mdi-24px cursor-pointer" ngClass="{{graphType===1?'active':''}}" (click)="changeGraphType(1)"></i>
-    <i class="mdi mdi-chart-line mdi-24px cursor-pointer" ngClass="{{graphType===2?'active':''}}" (click)="changeGraphType(2)"></i>
-  </div>
-</div>
