@@ -1,0 +1,103 @@
+<div ngClass="assign-tags-wrapper" fxLayout="column">
+  <mat-toolbar color="primary">
+    <h3 fxFlex>  View / Assign {{manageTagOperation == 'ManageNodeTag' ? 'Tags':'Tag Groups'}} - {{selectedProject.projectName}} <span *ngIf="manageTagOperation == 'ManageNodeTag'"> - {{selectedNode.shortTitle}}</span></h3>
+    <button mat-button mat-dialog-close><i class="mdi mdi-close mdi-24px"></i></button>
+  </mat-toolbar>
+  <mat-dialog-content fxLayout="column" fxLayoutGap="15px">
+    <div ngClass="custom-mat-input-wrapper" fxLayout="row" fxLayoutAlign="start start" fxFlex="40px">
+      <i class="mat-prefix mdi mdi-magnify mdi-24px"></i>
+      <input type="search" ngClass="form-control" placeholder="Search Tag Groups" fxFlex [(ngModel)]="searchString">
+    </div>
+    <div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="10px">
+      <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="30px">
+        <h2 fxFlex="50">Available Tags</h2>
+        <h2 fxFlex="50">Assigned Tags</h2>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start stretch" fxLayoutGap="30px">
+        <mat-card fxFlex="50">
+          <div slimScroll class="manage-project-tag-group">
+            <mat-accordion ngClass="custom-mat-accordion" *ngFor="let tagGroup of availableTagGroups  | filterTags:  searchString">
+              <mat-expansion-panel [expanded]="true" *ngIf="(tagGroup.tags.length>0&&!tagGroup.isSystemManaged)||tagGroup.tagGroupType===tagGroupType.UserTagGroup">
+                <mat-expansion-panel-header ngClass="p-1" collapsedHeight="40px" expandedHeight="40px">
+                  <mat-panel-title fxFlex>
+                    <div fxLayout="row" fxLayoutAlign="space-between stretch" fxFlex>
+                      <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                        <i [ngStyle]="{'color': tagGroup.colour}" class="mdi mdi-tag mdi-18px"></i>
+                        <span>{{tagGroup.tagGroupName}} {{tagGroup.limitToOne ? '(Limit to One)':''}}</span>
+                        <span></span>
+                      </div>
+                      <mat-spinner fxFlex="30px" *ngIf="tagGroup.inProgress" ngClass="tag-view-loader" fxLayoutAlign="end"></mat-spinner>
+                      <span fxFlex="30px" fxFlexAlign="end" *ngIf="manageTagOperation === 'ManageProjectTagGroup'&&!tagGroup.inProgress" (click)="addTagGroup(tagGroup);$event.stopPropagation();">
+                        <i class="mdi mdi-plus-circle mdi-18px"></i>
+                      </span>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <div fxLayout="column" *ngIf="tagGroup.tagGroupType===tagGroupType.OtherTagGroup">
+                  <mat-chip-list ngClass="mat-chip-list-stacked" aria-orientation="vertical">
+                    <mat-chip *ngFor="let tag of tagGroup.tags" [ngStyle]="{'background-color': tagGroup.colour }" selected="true" fxLayout="row"
+                              fxLayoutGap="5px" fxLayoutAlign="start center">
+                      <span>{{tag.tagName}}</span>
+                      <mat-spinner *ngIf="tag.inProgress" ngClass="tag-view-loader" fxLayoutAlign="end"></mat-spinner>
+                      <i *ngIf="manageTagOperation == 'ManageNodeTag'&&!tag.inProgress&&checkLimitToOne(tagGroup)" (click)="addTag(tag,tagGroup)"
+                         class="mdi mdi-plus-circle mdi-18px" fxLayoutAlign="end"></i>
+                    </mat-chip>
+                  </mat-chip-list>
+                </div>
+
+                <div fxLayout="column" *ngIf="manageTagOperation === 'ManageNodeTag' && tagGroup.tagGroupType===tagGroupType.UserTagGroup">
+                  <div fxFlex="37px" fxLayoutAlign="stretch center" fxLayout="row">
+                    <input type="Search" ngClass="form-control" [(ngModel)]="tagGroup.filterString" placeholder="Type to Filter" fxFlex [disabled]="!checkLimitToOne(tagGroup)">
+                    <button mat-raised-button color="primary" (click)="tagGroup.fetchingRecords=true;getUsers(tagGroup,tagGroup.filterString)" [disabled]="!checkLimitToOne(tagGroup)"><i class="mdi mdi-magnify mdi-18px"></i></button>
+                  </div>
+                  <mat-progress-bar *ngIf="tagGroup.fetchingRecords" ngClass="mt-0" mode="indeterminate" style="margin-bottom:0!important"></mat-progress-bar>
+                  <div *ngIf="tagGroup.filteredUsers" ngClass="user-search-info-wrapper" fxLayoutAlign="start stretch" fxLayout="column">
+
+                    <div *ngFor="let user of tagGroup.filteredUsers" ngClass="user-search-info" fxFlex="37px" fxLayoutAlign="space-between center" fxLayout="row">
+                      <span fxFlexOffset="15px">{{user.firstName}} {{user.lastName}}</span>
+                      <span>
+                        <button *ngIf="!user.inProgress" [disabled]="!checkLimitToOne(tagGroup)" mat-raised-button color="primary" (click)="user.inProgress=true; assignUserToNode(tagGroup,user)">Add   <i class="mdi mdi-account-plus"></i></button>
+                        <mat-spinner *ngIf="user.inProgress" ngClass="tag-view-loader" fxLayoutAlign="end"></mat-spinner>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-card>
+        <mat-card fxFlex="50">
+          <div slimScroll class="manage-project-tag-group">
+            <mat-accordion ngClass="custom-mat-accordion" *ngFor="let tagGroup of assignedTagGroups | filterTags:  searchString">
+              <mat-expansion-panel [expanded]="true" *ngIf="(tagGroup.tags.length>0&&(manageTagOperation == 'ManageNodeTag'||!tagGroup.isSystemManaged))||tagGroup.tagGroupType===tagGroupType.UserTagGroup">
+                <mat-expansion-panel-header ngClass="p-1" collapsedHeight="40px" expandedHeight="40px">
+                  <mat-panel-title fxFlex>
+                    <div fxLayout="row" fxLayoutAlign="space-between stretch" fxFlex>
+                      <div fxFlex fxLayout="row" fxLayoutGap="5px">
+                        <i [ngStyle]="{'color': tagGroup.colour}" class="mdi mdi-tag mdi-18px"></i>
+                        <span>{{tagGroup.tagGroupName}}</span>
+                      </div>
+                      <mat-spinner fxFlex="30px" *ngIf="tagGroup.inProgress" ngClass="tag-view-loader" fxLayoutAlign="end"></mat-spinner>
+                      <span fxFlex="30px" fxFlexAlign="end" *ngIf="!tagGroup.inProgress&&manageTagOperation != 'ManageNodeTag'" (click)="removeTagGroup(tagGroup);$event.stopPropagation();">
+                        <i class="mdi mdi-close-circle mdi-18px"></i>
+                      </span>
+                    </div>
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <mat-chip-list ngClass="mat-chip-list-stacked" aria-orientation="vertical" *ngIf="manageTagOperation === 'ManageNodeTag' || tagGroup.tagGroupType===tagGroupType.OtherTagGroup">
+                  <mat-chip *ngFor="let tag of tagGroup.tags" [ngStyle]="{'background-color': tagGroup.colour }" selected="true" fxLayout="row"
+                            fxLayoutGap="5px" fxLayoutAlign="start center">
+                    <span>{{tag.tagName}}</span>
+                    <mat-spinner *ngIf="tag.inProgress" ngClass="tag-view-loader" fxLayoutAlign="end"></mat-spinner>
+                    <i *ngIf="manageTagOperation == 'ManageNodeTag'&&!tag.inProgress" (click)="removeTag(tag,tagGroup)" class="mdi mdi-close-circle mdi-18px"
+                       fxLayoutAlign="end"></i>
+                  </mat-chip>
+                </mat-chip-list>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-card>
+      </div>
+    </div>
+  </mat-dialog-content>
+</div>

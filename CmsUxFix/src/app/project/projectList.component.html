@@ -1,0 +1,286 @@
+<div fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="15px">
+  <div fxFlex="50%" fxLayout="row">
+    <span fxFlex ngClass="custom-form-field project-search" fxLayoutAlign="stretch center">
+      <input type="Search" [(ngModel)]="searchString" name="searchString" fxFlex placeholder="Filter projects">
+      <i class="mdi mdi-magnify mdi-24px"></i>
+    </span>
+  </div>
+  <div fxFlex="5%">
+    <span ngClass="cursor-pointer">
+      <i *ngIf="isGridView" (click)="isGridView=!isGridView" class="mdi mdi-view-list mdi-24px"></i>
+      <i *ngIf="!isGridView" (click)="isGridView=!isGridView" class="mdi mdi-view-module mdi-24px"></i>
+    </span>
+  </div>
+  <div fxFlex="45%" fxLayoutAlign="space-between center">
+    <div fxLayout="row" fxLayoutAlign="end center" fxFlex="0 0 calc(100% - 20px)">
+      <button color="primary" (click)="openCreateProjectDialog()" [fxHide]="!isOperationAllowed([cmsOperations.CreateProject])" class="btn-primary">Create Project</button>
+    </div>
+  </div>
+</div>
+
+<mat-accordion fxLayout="column">
+  <mat-expansion-panel [expanded]="true" ngClass="bg-transparent" fxFlexOffset="25px">
+    <mat-expansion-panel-header ngClass="p-0" collapsedHeight="24px" expandedHeight="24px">
+      <mat-panel-title>
+        <h2>Recent &amp; Favourite Projects</h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div ngClass="project-list-wrapper" fxLayout="column">
+      <div fxLayout="{{isGridView ? 'row':'column'}}" fxLayoutWrap fxLayoutAlign="start {{isGridView ? 'start':'stretch'}}" fxLayoutGap="15px"
+        ngClass="{{isGridView ? 'grid-view-wrapper':''}}">
+        <div fxLayout="column" fxLayoutAlign="start stretch" fxFlexFill fxFlexOffset="1.5" *ngIf="!isGridView&&projectsLoaded">
+          <div fxLayout="row" fxFlex="100" fxFlexOffset="1.5" fxFlexAlign="stretch">
+            <mat-card fxLayout="row" fxFlex="0 0 calc(100% - 20px)">
+              <mat-card-content fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="10px">
+                <div fxFlex="20%">Project Name</div>
+                <div fxFlex="30%">Project Description</div>
+                <div fxFlex="10%">Total Drafts</div>
+                <div fxFlex="11%">Total Articles</div>
+                <div fxFlex="12%">Last Updated</div>
+                <div fxFlex="4%">&nbsp;</div>
+                <div fxFlex="6%">&nbsp;</div>
+                <div fxFlex="7%">&nbsp;</div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+        <div fxLayout="column" fxFlex="{{isGridView ? '31.5':'100'}}" fxFlex.md="{{isGridView ? '47':'100'}}" ngClass="{{isGridView ? 'grid-view':'list-view'}} {{getProjectClass(project)}}"
+          *ngFor="let project of favouriteAndRecentProjects | filter: 'projectName': searchString">
+          <mat-card fxFlexOffset="15px" fxFlex="100" *ngIf="isGridView">
+            <mat-card-title fxLayout="row" fxLayoutAlign="space-between center">
+              <div ngClass="oneline-ellipsis" matTooltip="{{project.projectName}}" fxFlex>{{project.projectName}}</div>
+              <div fxFlex="130px" fxLayoutAlign="end center">
+                <small fxFlex fxLayoutAlign="end">2h</small>
+                <a [mat-menu-trigger-for]="menu" (click)="$event.stopPropagation()" ngClass="cursor-pointer" fxFlexOffset="10px" [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">
+                  <i class="mdi mdi-settings mdi-24px"></i>
+                  <i class="mdi mdi-chevron-down" fxFlexOffset="-5px"></i>
+                </a>
+                <mat-menu #menu="matMenu" [overlapTrigger]="false" xPosition="before" class="arrowtop">
+                  <button mat-menu-item [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">Project Settings</button>
+                  <button mat-menu-item *ngIf="project.typeOfContent !== documentationType.KnowledgeBase" (click)="createDistribution(project)"
+                    [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution])">
+                    Distributions
+                  </button>
+                  <button mat-menu-item (click)="openManageTagGroupsDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject])">Manage Tag Groups</button>
+                  <button mat-menu-item (click)="openManageAdminDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AssignOrRemoveProjectAdmin])">Manage Admins</button>
+                  <button mat-menu-item (click)="deleteProject(project)">Delete Project</button>
+                </mat-menu>
+              </div>
+            </mat-card-title>
+            <mat-divider></mat-divider>
+            <mat-card-content fxLayout="column" class="word-break">
+              <p class="mt-10" title="{{project.description}}">{{project.description}}</p>
+            </mat-card-content>
+            <mat-divider></mat-divider>
+
+            <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="5px" ngClass="m-0">
+              <mat-chip-list fxLayout="row" fxLayoutAlign="start center">
+                <mat-chip color="primary" selected="true" ngClass="p-5 circle" fxLayoutAlign="center" fxFlex="30px">
+                  <small>156</small>
+                </mat-chip>
+                <small fxFlexOffset="3px">Total Articles</small>
+              </mat-chip-list>
+              <mat-chip-list fxLayout="row" fxLayoutAlign="start center">
+                <mat-chip ngClass="p-5 circle" fxLayoutAlign="center" fxFlex="30px">
+                  <small>45</small>
+                </mat-chip>
+                <small fxFlexOffset="3px">Drafts</small>
+              </mat-chip-list>
+              <span class="favourite-project-icon cursor-pointer" (click)="addRemoveFavouriteProject(!project.isFavourite, project._id)">
+                <i [class]="project.isFavourite?'mdi-star mdi mdi-24px':'mdi-star-outline mdi mdi-24px'"></i>
+              </span>
+              <span>
+                <button class="btn-primary" color="primary" (click)="navigateToAuthoringPane(project)">
+                  Open</button>
+              </span>
+            </mat-card-actions>
+          </mat-card>
+          <div fxLayout="row" fxFlex="100" fxFlexAlign="stretch" fxFlexFill *ngIf="!isGridView">
+            <mat-card fxLayout="row" ngClass="cursor-pointer" fxFlex="0 0 calc(100% - 20px)">
+              <mat-card-content fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="10px">
+                <div class="oneline-ellipsis" fxFlex="22%">{{project.projectName}}</div>
+                <div class="word-break" fxFlex="33%" title="{{project.description}}">
+                  {{project.description}}
+                </div>
+                <div fxFlex="10%">
+                  <mat-chip-list>
+                    <mat-chip color="warn" selected="true">158</mat-chip>
+                  </mat-chip-list>
+                </div>
+                <div fxFlex="11%">
+                  <mat-chip-list>
+                    <mat-chip color="warn" selected="true">158</mat-chip>
+                  </mat-chip-list>
+                </div>
+                <div class="project-update-date" fxFlex="16%">Sep 4,2017</div>
+                <div fxFlex="4%">
+                  <span class="favourite-project-icon cursor-pointer" (click)="addRemoveFavouriteProject(!project.isFavourite, project._id)">
+                    <i [class]="project.isFavourite?'mdi-star mdi mdi-24px':'mdi-star-outline mdi mdi-24px'"></i>
+                  </span>
+                </div>
+                <div fxFlex="6%">
+                  <a [mat-menu-trigger-for]="menu" (click)="$event.stopPropagation()" ngClass="cursor-pointer" fxFlexOffset="10px" [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">
+                    <i class="mdi mdi-settings mdi-24px"></i>
+                  </a>
+                  <mat-menu #menu="matMenu" [overlapTrigger]="false" xPosition="before" class="arrowtop">
+                    <button mat-menu-item [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">Project Settings</button>
+                    <button mat-menu-item *ngIf="project.typeOfContent !== documentationType.KnowledgeBase" (click)="createDistribution(project)"
+                      [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution])">Distributions</button>
+                    <button mat-menu-item (click)="openManageTagGroupsDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject])">Manage Tag Groups</button>
+                    <button mat-menu-item (click)="openManageAdminDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AssignOrRemoveProjectAdmin])">Manage Admins</button>
+                    <button mat-menu-item (click)="deleteProject(project)">Delete Project</button>
+                  </mat-menu>
+                </div>
+                <div fxFlex="7%">
+                  <button mat-raised-button color="primary" (click)="navigateToAuthoringPane(project)">Open</button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="project-status">
+            <mat-progress-bar ngClass="mt-0" mode="indeterminate"></mat-progress-bar>
+            <div ngClass="project-validation"></div>
+          </div>
+          <mat-progress-bar mode="indeterminate" *ngIf="isProgressShow && project._id === selectedProject._id"></mat-progress-bar>
+
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+<mat-accordion fxLayout="column">
+
+  <mat-expansion-panel [expanded]="true" ngClass="bg-transparent" fxFlexOffset="25px">
+    <mat-expansion-panel-header ngClass="p-0" collapsedHeight="24px" expandedHeight="24px">
+      <mat-panel-title>
+        <h2>Other Projects</h2>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div *ngIf="!projectsLoaded" class="loadingholder">
+      <div class="middle"></div>
+      <div class="logoicon logoloader"></div>
+    </div>
+    <div ngClass="project-list-wrapper" fxLayout="column">
+      <div fxLayout="{{isGridView ? 'row':'column'}}" fxLayoutWrap fxLayoutAlign="start {{isGridView ? 'start':'stretch'}}" fxLayoutGap="15px"
+        ngClass="{{isGridView ? 'grid-view-wrapper':''}}">
+        <div fxLayout="column" fxLayoutAlign="start stretch" fxFlexFill fxFlexOffset="1.5" *ngIf="!isGridView&&projectsLoaded">
+          <div fxLayout="row" fxFlex="100" fxFlexOffset="1.5" fxFlexAlign="stretch">
+            <mat-card fxLayout="row" fxFlex="0 0 calc(100% - 20px)">
+              <mat-card-content fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="10px">
+                <div fxFlex="20%">Project Name</div>
+                <div fxFlex="30%">Project Description</div>
+                <div fxFlex="10%">Total Drafts</div>
+                <div fxFlex="11%">Total Articles</div>
+                <div fxFlex="12%">Last Updated</div>
+                <div fxFlex="4%">&nbsp;</div>
+                <div fxFlex="6%">&nbsp;</div>
+                <div fxFlex="7%">&nbsp;</div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+        <div fxLayout="column" fxFlex="{{isGridView ? '31.5':'100'}}" fxFlex.md="{{isGridView ? '47':'100'}}" ngClass="{{isGridView ? 'grid-view':'list-view'}} {{getProjectClass(project)}}"
+          *ngFor="let project of projects | sort: 'projectName' | filterProperties:[['isFavourite', false], ['isRecent', false]] | filter: 'projectName': searchString">
+          <mat-card fxFlexOffset="15px" fxFlex="100" *ngIf="isGridView">
+            <mat-card-title fxLayout="row" fxLayoutAlign="space-between center">
+              <div ngClass="oneline-ellipsis" matTooltip="{{project.projectName}}" fxFlex>{{project.projectName}}</div>
+              <div fxFlex="130px" fxLayoutAlign="end center">
+                <small fxFlex fxLayoutAlign="end">2h</small>
+                <a [mat-menu-trigger-for]="menu" (click)="$event.stopPropagation()" ngClass="cursor-pointer" fxFlexOffset="10px" [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">
+                  <i class="mdi mdi-settings mdi-24px"></i>
+                  <i class="mdi mdi-chevron-down" fxFlexOffset="-5px"></i>
+                </a>
+                <mat-menu #menu="matMenu" [overlapTrigger]="false" xPosition="before" class="arrowtop">
+                  <button mat-menu-item [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">Project Settings</button>
+                  <button mat-menu-item *ngIf="project.typeOfContent !== documentationType.KnowledgeBase" (click)="createDistribution(project)"
+                    [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution])">
+                    Distributions
+                  </button>
+                  <button mat-menu-item (click)="openManageTagGroupsDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject])">Manage Tag Groups</button>
+                  <button mat-menu-item (click)="openManageAdminDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AssignOrRemoveProjectAdmin])">Manage Admins</button>
+                  <button mat-menu-item (click)="deleteProject(project)">Delete Project</button>
+                </mat-menu>
+              </div>
+            </mat-card-title>
+            <mat-divider></mat-divider>
+            <mat-card-content fxLayout="column" class="word-break">
+              <p class="mt-10" title="{{project.description}}">{{project.description}}</p>
+            </mat-card-content>
+            <mat-divider></mat-divider>
+
+            <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="5px" ngClass="m-0">
+              <mat-chip-list fxLayout="row" fxLayoutAlign="start center">
+                <mat-chip color="primary" selected="true" ngClass="p-5 circle" fxLayoutAlign="center" fxFlex="30px">
+                  <small>156</small>
+                </mat-chip>
+                <small fxFlexOffset="3px">Total Articles</small>
+              </mat-chip-list>
+              <mat-chip-list fxLayout="row" fxLayoutAlign="start center">
+                <mat-chip ngClass="p-5 circle" fxLayoutAlign="center" fxFlex="30px">
+                  <small>45</small>
+                </mat-chip>
+                <small fxFlexOffset="3px">Drafts</small>
+              </mat-chip-list>
+              <span class="favourite-project-icon cursor-pointer" (click)="addRemoveFavouriteProject(!project.isFavourite, project._id)">
+                <i [class]="project.isFavourite?'mdi-star mdi mdi-24px':'mdi-star-outline mdi mdi-24px'"></i>
+              </span>
+              <span>
+                <button class="btn-primary" color="primary" (click)="navigateToAuthoringPane(project)">
+                  Open</button>
+              </span>
+            </mat-card-actions>
+          </mat-card>
+          <div fxLayout="row" fxFlex="100" fxFlexAlign="stretch" fxFlexFill *ngIf="!isGridView">
+            <mat-card fxLayout="row" ngClass="cursor-pointer" fxFlex="0 0 calc(100% - 20px)">
+              <mat-card-content fxLayout="row" fxFlex="100" fxLayoutAlign="start center" fxLayoutGap="10px">
+                <div class="oneline-ellipsis" fxFlex="22%">{{project.projectName}}</div>
+                <div class="word-break" fxFlex="33%" title="{{project.description}}">
+                  {{project.description}}
+                </div>
+                <div fxFlex="10%">
+                  <mat-chip-list>
+                    <mat-chip color="warn" selected="true">158</mat-chip>
+                  </mat-chip-list>
+                </div>
+                <div fxFlex="11%">
+                  <mat-chip-list>
+                    <mat-chip color="warn" selected="true">158</mat-chip>
+                  </mat-chip-list>
+                </div>
+                <div class="project-update-date" fxFlex="16%">Sep 4,2017</div>
+                <div fxFlex="4%">
+                  <span class="favourite-project-icon cursor-pointer" (click)="addRemoveFavouriteProject(!project.isFavourite, project._id)">
+                    <i [class]="project.isFavourite?'mdi-star mdi mdi-24px':'mdi-star-outline mdi mdi-24px'"></i>
+                  </span>
+                </div>
+                <div fxFlex="6%">
+                  <a [mat-menu-trigger-for]="menu" (click)="$event.stopPropagation()" ngClass="cursor-pointer" fxFlexOffset="10px" [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">
+                    <i class="mdi mdi-settings mdi-24px"></i>
+                  </a>
+                  <mat-menu #menu="matMenu" [overlapTrigger]="false" xPosition="before" class="arrowtop">
+                    <button mat-menu-item [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution,cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject,cmsOperations.AssignOrRemoveProjectAdmin])">Project Settings</button>
+                    <button mat-menu-item *ngIf="project.typeOfContent !== documentationType.KnowledgeBase" (click)="createDistribution(project)"
+                      [fxHide]="!checkAccess(project,[cmsOperations.CreateDistribution])">Distributions</button>
+                    <button mat-menu-item (click)="openManageTagGroupsDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AddTagGroupsToProject,cmsOperations.DeleteTagGroupsFromProject])">Manage Tag Groups</button>
+                    <button mat-menu-item (click)="openManageAdminDialog(project)" [fxHide]="!checkAccess(project,[cmsOperations.AssignOrRemoveProjectAdmin])">Manage Admins</button>
+                    <button mat-menu-item (click)="deleteProject(project)">Delete Project</button>
+                  </mat-menu>
+                </div>
+                <div fxFlex="7%">
+                  <button mat-raised-button color="primary" (click)="navigateToAuthoringPane(project)">Open</button>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+          <div class="project-status">
+            <mat-progress-bar ngClass="mt-0" mode="indeterminate"></mat-progress-bar>
+            <div ngClass="project-validation"></div>
+          </div>
+
+          <mat-progress-bar mode="indeterminate" *ngIf="isProgressShow && project._id === selectedProject._id"></mat-progress-bar>
+
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

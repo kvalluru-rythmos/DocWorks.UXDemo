@@ -1,0 +1,32 @@
+<mat-list fxLayout="column" ngClass="personal-updates">
+  <h2 class="mb-10">Operation Status</h2>
+  <mat-progress-bar mode="indeterminate" *ngIf="isDataLoading"></mat-progress-bar>
+  <div slimScroll ngClass="personal-updates-scroll">
+    <div ngClass="operation-status-list {{getClass(item)}}" *ngFor="let item of userOperations" (click)="item.status === constEventStatus.Failure?navigateToErrorDetail(item.responseId):item.status === constEventStatus.Success?navigateToURL(item):''">
+      <mat-list-item fxLayout="row">
+        <mat-icon mat-list-icon *ngIf="item.status === constEventStatus.Success">
+          <i class="mdi mdi-check-circle mdi-36px"></i>
+        </mat-icon>
+        <mat-icon mat-list-icon *ngIf="item.status === constEventStatus.Failure">
+          <i class="mdi mdi-close-circle mdi-36px"></i>
+        </mat-icon>
+        <mat-icon mat-list-icon *ngIf="item.status === constEventStatus.Wait">
+          <mat-progress-spinner mode="determinate" value="{{item.progress}}" color="primary"></mat-progress-spinner>
+        </mat-icon>
+        <div appCustomTooltip ngClass="operation-status-wrapper">
+          <div class="oneline-ellipsis" [innerHTML]="item.description |sanitizeHtml"> </div>
+          <div class="custom-tooltip-child" fxLayout="column" fxLayoutGap="3px" [innerHTML]="item.description |sanitizeHtml">
+          </div>
+        </div>
+        <p fxLayout="column" fxLayoutAlign="end" fxFlex="100px">
+          <small fxLayoutAlign="end">
+            {{item.operationDate | relativeDate}}
+          </small>
+          <small *ngIf="item.status === constEventStatus.Wait" ngClass="operation-status" fxLayoutAlign="end" fxFlexOffset="15px">
+            <strong>{{item.completedEventCount?item.completedEventCount:'--'}}</strong>/{{item.totalEventCount?item.totalEventCount:'--'}}
+            Completed</small>
+        </p>
+      </mat-list-item>
+    </div>
+  </div>
+</mat-list>

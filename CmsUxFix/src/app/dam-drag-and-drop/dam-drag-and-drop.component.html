@@ -1,0 +1,65 @@
+<div fxLayout="column" fxFlexFill>
+  <div id="dam-dragdrop" class="media-images-wrapper" ngClass="{{viewType===dragDropComponentViewType.uploadView?'thumbnail-view':(assetData.assetType===constantAssetType.codeSnippet?'code-block-preview':'thumbnail-preview')}}"
+    fxLayout="column" fxFlex="100" (drop)="(isDataLoading ||isAssetUploading)?'':drop($event)" (dragenter)="(isDataLoading ||isAssetUploading)?'':dragEnter($event)"
+    (dragleave)="(isDataLoading ||isAssetUploading)?'':dragLeave($event)" (dragover)="(isDataLoading ||isAssetUploading)?'':dragOver($event)"
+    [class]="dropUploadAssetClass">
+    <div *ngIf="isAssetAdded" fxLayoutAlign="center center">New Asset's added please refresh the page.</div>
+    <div ngClass="image-drag-overlay" fxLayout="column" fxLayoutAlign="end center">
+      <i class="mdi mdi-cloud-upload mdi-36px"></i>
+      <button mat-raised-button color="primary">Drop File Here to Upload</button>
+    </div>
+
+    <div fxLayout="row" appInfiniteScroll (scrolldown)="scrolldown(true)" (scrollup)="scrolldown(false)" ngClass="media-images-scroll"
+      fxLayoutWrap fxLayoutAlign="start start" slimScroll fxFlexFill>
+      <div ngClass="media-images" fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="flex-start stretch" [class]="asset.assetId===selectedAssetId?'active':''"
+        *ngFor="let asset of (viewType===dragDropComponentViewType.replaceView?[]:assetData)" (click)="(selectedAssetId != asset.assetId?getAssetDetail(asset):'');selectedAssetId = asset.assetId;">
+        <div ngClass="media-image" fxLayoutAlign="center center">
+          <mat-icon fxFlex="80px" *ngIf="assetType===constantAssetType.codeSnippet">
+            <i class="mdi mdi-file-xml mdi-80"></i>
+          </mat-icon>
+          <img *ngIf="assetType===constantAssetType.image" src="{{asset.assetContent}}">
+        </div>
+        <span ngClass="file-name" fxFlex="20px" fxHide class="oneline-ellipsis" title="{{asset.fileName}}">{{asset.fileName}}</span>
+      </div>
+
+      <div *ngIf="viewType===dragDropComponentViewType.replaceView" ngClass="{{assetData.assetType===constantAssetType.image?'media-images':'media-code'}}"
+        fxLayout="column" fxLayoutGap="10px" fxLayoutAlign="flex-start stretch">
+        <div ngClass="media-image" fxLayoutAlign="center center" *ngIf="assetData.assetType===constantAssetType.image">
+          <img src="{{assetData.assetContent}}">
+        </div>
+        <div ngClass="media-image code-wrapper" *ngIf="assetData.assetType===constantAssetType.codeSnippet">
+          <code ngNonBindable [innerHTML]="formatCodeContent(assetData.assetContent) | sanitizeHtml">
+              </code>
+        </div>
+      </div>
+    </div>
+  </div>
+  <mat-progress-bar mode="indeterminate" *ngIf="isDataLoading||isAssetUploading"></mat-progress-bar>
+  <div ngClass="image-upload-info" fxLayout="column" fxFlex="60px" fxLayoutAlign="start stretch">
+
+    <div fxLayout="row" fxLayoutAlign="start center" fxFlex>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex>
+        <p fxFlexOffset="20px">
+          <span>*</span>
+          <em>Drag and drop files above</em>
+        </p>
+        <span fxFlexOffset="20px">or</span>
+        <button mat-raised-button ngClass="secondary-btn" fxFlexOffset="20px" (click)="(isDataLoading ||isAssetUploading)?'':fileInput.click()"
+          ng-disabled="(isDataLoading ||isAssetUploading)">
+          <span>{{viewType==dragDropComponentViewType.uploadView?'Upload':'Replace'}}</span>
+          <i class="mdi mdi-18px mdi-upload" *ngIf="viewType===dragDropComponentViewType.uploadView"></i>
+          <i class="mdi mdi-18px mdi-refresh" *ngIf="viewType!==dragDropComponentViewType.uploadView"></i>
+          <input #fileInput type="file" (change)="onFileInput($event)" style="display:none;" />
+        </button>
+      </div>
+      <div fxLayoutAlign="end stretch">
+        <mat-error fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="5px" *ngIf="uploadErrorMessage">
+          <i class="mdi mdi-information mdi-18px"></i>
+          <span>{{uploadErrorMessage}}</span>
+        </mat-error>
+        <em *ngIf="isAssetUploading">Uploading</em>
+      </div>
+    </div>
+  </div>
+
+</div>

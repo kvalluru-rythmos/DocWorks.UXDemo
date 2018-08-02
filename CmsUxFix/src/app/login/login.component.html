@@ -1,0 +1,45 @@
+<div fxLayout="row" fxLayoutAlign="space-around start" fxFlexFill ngClass="login-wrapper docworksLightTheme">
+  <div fxLayout="column" fxFlex="440px">
+    <div fxLayout="column" fxLayoutAlign="center center" fxLayoutGap="20px">
+      <span>
+        <img src="../assets/img/unity-logo-black.png" alt="Logo" class="logo">
+      </span>
+      <h1 class="login-heading">DocWorks</h1>
+    </div>
+    <mat-card fxLayout="column" fxLayoutGap="20px" fxFlexOffset="25px">
+      <h2 ngClass="login-title">SIGN IN</h2>
+      <form [formGroup]="loginForm" autocomplete="off" fxLayout="column" fxLayoutGap="5px" fxLayoutAlign="start stretch">
+        <mat-form-field fxFlex>
+          <input matInput placeholder="User Name" [formControl]="username" required>
+          <mat-icon matSuffix>
+            <i class="mdi mdi-account mdi-18px"></i>
+          </mat-icon>
+          <mat-error *ngIf="username.hasError('required')">User Name is required.</mat-error>
+          <mat-error *ngIf="username.hasError('minlength')"> Please enter at least 5 characters.</mat-error>
+          <mat-error *ngIf="username.hasError('maxlength')"> Please enter maximum of 100 characters</mat-error>
+          <mat-error *ngIf="username.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+        <mat-form-field fxFlex>
+          <input matInput placeholder="Password" type="password" required [formControl]="password">
+          <mat-icon matSuffix>
+            <i class="mdi mdi-lock mdi-18px"></i>
+          </mat-icon>
+          <mat-error *ngIf="password.hasError('required')">Password is required.</mat-error>
+          <mat-error *ngIf="password.hasError('minlength')"> Please enter at least 5 characters.</mat-error>
+          <mat-error *ngIf="password.hasError('maxlength')"> Max 25 characters allowed.</mat-error>
+        </mat-form-field>
+        <div fxLayout="column" fxLayoutAlign="center center">
+          <p-captcha siteKey="{{recaptchaSiteKey}}" (onResponse)="getCaptchaResponse($event)"></p-captcha>
+        </div>
+        <div *ngIf="errorMsg.length>0">
+          <small class="errorText"> {{errorMsg}}</small>
+        </div>
+        <div fxLayout="column" class="login-button-wrapper">
+          <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid || isProgressShow || !captchaResponseToken"
+            (click)="doLogin()">LOGIN</button>
+        </div>
+        <mat-progress-bar mode="indeterminate" *ngIf="isProgressShow"></mat-progress-bar>
+      </form>
+    </mat-card>
+  </div>
+</div>

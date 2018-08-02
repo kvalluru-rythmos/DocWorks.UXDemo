@@ -1,0 +1,89 @@
+<mat-progress-bar mode="indeterminate" *ngIf="(isDataLoading || isUpdateInProgress || isAssetReplaceInProgress)"></mat-progress-bar>
+<div ngClass="media-preview-body" fxFlex="100">
+  <form [formGroup]="assetPropertyForm">
+    <div fxLayout="column" fxLayoutAlign="start stretch" slimScroll fxFlexFill class="asset-preview-properties">
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px">
+        <label fxFlex>File Name :</label>
+        <label fxFlex class="oneline-ellipsis"> {{assetDetail.fileName}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px">
+        <label fxFlex>Asset ID :</label>
+        <label fxFlex> {{assetDetail.assetId}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px">
+        <label fxFlex>Size :</label>
+        <label fxFlex> {{assetDetail.fileSize | filesize}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px">
+        <label fxFlex>File Uploaded By :</label>
+        <label fxFlex class="oneline-ellipsis"> {{assetDetail.uploadedBy}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px">
+        <label fxFlex>File Created :</label>
+        <label fxFlex> {{(assetDetail.uploadedDate | epocToDatetime) | date:'mediumDate'}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="(assetDetail.assetType?assetDetail.assetType.toString():'') === assetType.image.toString() && isEditProperties">
+        <label fxFlex>Alt Title :</label>
+        <mat-form-field floatPlaceholder="never" fxFlex>
+          <input matInput [formControl]="altTitle" [(ngModel)]="assetDetail.altTitle">
+          <mat-error *ngIf="altTitle.hasError('maxlength')"> Please enter maximum of 100 characters.</mat-error>
+          <mat-error *ngIf="altTitle.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="(assetDetail.assetType?assetDetail.assetType.toString():'') === assetType.image.toString() && !isEditProperties">
+        <label fxFlex>Alt Title :</label>
+        <label fxFlex> {{assetDetail.altTitle}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="(assetDetail.assetType?assetDetail.assetType.toString():'') === assetType.image.toString() && isEditProperties">
+        <label fxFlex>Unity Project Source :</label>
+        <mat-form-field floatPlaceholder="never" fxFlex>
+          <input matInput [formControl]="unityProjectSource" [(ngModel)]="assetDetail.unityProjectSource">
+          <mat-error *ngIf="unityProjectSource.hasError('whitespace')">Leading and trailing whitespaces not allowed</mat-error>
+          <mat-error *ngIf="unityProjectSource.hasError('maxlength')"> Please enter maximum of 100 characters.</mat-error>
+          <mat-error *ngIf="unityProjectSource.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="(assetDetail.assetType?assetDetail.assetType.toString():'') === assetType.image.toString() && !isEditProperties">
+        <label fxFlex>Unity Project Source :</label>
+        <label fxFlex> {{assetDetail.unityProjectSource}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="80px" *ngIf="isEditProperties">
+        <label fxFlex>Whats Depicted :</label>
+        <mat-form-field floatPlaceholder="never" fxFlex>
+          <textarea matInput [formControl]="depicted" [(ngModel)]="assetDetail.depicted"></textarea>
+          <mat-error *ngIf="depicted.hasError('maxlength')"> Please enter maximum of 1000 characters.</mat-error>
+          <mat-error *ngIf="depicted.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="!isEditProperties">
+        <label fxFlex>Whats Depicted :</label>
+        <label fxFlex> {{assetDetail.depicted}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="80px" *ngIf="(assetDetail.assetType?assetDetail.assetType.toString():'') === assetType.image.toString() && isEditProperties">
+        <label fxFlex>Instructions to Re-Create Image :</label>
+        <mat-form-field floatPlaceholder="never" fxFlex>
+          <textarea matInput [formControl]="instructionsToReCreateImage" [(ngModel)]="assetDetail.instructionsToReCreateImage"></textarea>
+          <mat-error *ngIf="instructionsToReCreateImage.hasError('maxlength')"> Please enter maximum of 1000 characters.</mat-error>
+          <mat-error *ngIf="instructionsToReCreateImage.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="(assetDetail.assetType?assetDetail.assetType.toString():'') === assetType.image.toString() && !isEditProperties">
+        <label fxFlex>Instructions to Re-Create Image :</label>
+        <label fxFlex> {{assetDetail.instructionsToReCreateImage}}</label>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="80px" *ngIf="isEditProperties">
+        <label fxFlex>Description:</label>
+        <mat-form-field floatPlaceholder="never" fxFlex>
+          <textarea matInput [formControl]="description" [(ngModel)]="assetDetail.description"></textarea>
+          <mat-error *ngIf="description.hasError('whitespace')">Leading and trailing whitespaces not allowed</mat-error>
+          <mat-error *ngIf="description.hasError('maxlength')"> Please enter maximum of 1000 characters.</mat-error>
+          <mat-error *ngIf="description.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+        </mat-form-field>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40px" *ngIf="!isEditProperties">
+        <label fxFlex>Description :</label>
+        <label fxFlex> {{assetDetail.description}}</label>
+      </div>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,67 @@
+<div fxLayout="column" fxLayoutAlign="start stretch">
+  <mat-toolbar color="primary">
+    <h3 fxFlex>{{selectedTagGroup && selectedTagGroup.tagGroupId?'Edit Tag Group':'Create Tag Group'}}</h3>
+    <button mat-button mat-dialog-close>
+      <i class="mdi mdi-close mdi-24px"></i>
+    </button>
+  </mat-toolbar>
+  <form [formGroup]="tagGroupForm" fxLayout="column" fxLayoutAlign="start stretch">
+    <mat-dialog-content fxLayout="column" fxLayoutAlign="start stretch">
+      <div fxLayout="row" fxLayoutGap="30px">
+        <div fxLayout="column">
+          <mat-form-field fxHide>
+            <input matInput placeholder="Tag Group Id" [formControl]="tagGroupId">
+          </mat-form-field>
+          <mat-form-field fxFlexOffset="5px">
+            <input matInput placeholder="Tag Group Name" maxlength="100" required [formControl]="tagGroupName" (keyup)="checkValidName()">
+            <small matSuffix>{{tagGroupName.value?.length || 0}}/100</small>
+            <mat-error *ngIf="tagGroupName.hasError('required')">Tag group name is required</mat-error>
+            <mat-error *ngIf="tagGroupName.hasError('minlength')">Please enter at least 5 characters</mat-error>
+            <mat-error *ngIf="tagGroupName.hasError('maxlength')">Please enter maximum of 100 characters</mat-error>
+            <mat-error *ngIf="tagGroupName.hasError('whitespace')">Leading and trailing white spaces not allowed</mat-error>
+          </mat-form-field>
+          <mat-error *ngIf="!isValidTagGroup">Invalid Tag Group Name</mat-error>
+          <section fxLayout="row" fxLayoutGap="3%" fxLayoutWrap fxLayoutAlign="start center">
+            <div fxLayout="column" fxFlex="47%">
+              <mat-checkbox [formControl]="limitToOne" color="primary" fxFlexOffset="15px">Limit to one</mat-checkbox>
+            </div>
+            <div fxLayout="column" fxFlex="47%">
+              <mat-checkbox [formControl]="childNodesInherit" color="primary" fxFlexOffset="15px">Child nodes inherit</mat-checkbox>
+            </div>
+            <div fxLayout="column" fxFlex="47%">
+              <mat-checkbox [formControl]="displayGroupName" color="primary" fxFlexOffset="25px">Display group name</mat-checkbox>
+            </div>
+            <div fxLayout="column" fxFlex="47%">
+              <mat-checkbox [formControl]="publicTag" color="primary" fxFlexOffset="25px">Display on published page</mat-checkbox>
+            </div>
+            <div fxLayout="column" fxFlex="47%">
+              <mat-checkbox [formControl]="publish" color="primary" fxFlexOffset="25px">Include in published meta</mat-checkbox>
+            </div>
+            <div fxLayout="column" fxFlex="47%">
+              <mat-checkbox [disabled]="selectedTagGroup" [formControl]="userTagGroup" color="primary" fxFlexOffset="20px">User tag group</mat-checkbox>
+            </div>
+          </section>
+        </div>
+        <div ngClass="mb-20 mt-20" fxLayout="column">
+          <p>Select Color</p>
+          <p-colorPicker [formControl]="colour" inline="true"></p-colorPicker>
+          <p fxLayout="row" fxLayoutAlign="start center">Selcted Color:
+            <span ngClass="color-picker-value" [ngStyle]="{'background-color': colour.value?colour.value:'#ff0000'}"></span>{{colour.value?colour.value:'#ff0000'}}</p>
+        </div>
+      </div>
+      <div fxLayout="column">
+        <div fxLayout="row" fxLayoutAlign="end center" fxLayoutGap="5px" fxFlexOffset="10px">
+          <button [fxHide]="!isOperationAllowed([cmsOperations.CreateTagGroup])" *ngIf="!selectedTagGroup" mat-raised-button color="primary"
+            [disabled]="!(isValidTagGroup&&tagGroupForm.valid)" (click)="addTagGroup(); tagGroupForm.reset();">
+            CREATE
+          </button>
+          <button [fxHide]="!isOperationAllowed([cmsOperations.EditTagGroup])" *ngIf="selectedTagGroup" mat-raised-button color="primary"
+            [disabled]="!(isValidTagGroup&&tagGroupForm.valid)" (click)="editTagGroup(); tagGroupForm.reset();">
+            UPDATE
+          </button>
+        </div>
+      </div>
+
+    </mat-dialog-content>
+  </form>
+</div>

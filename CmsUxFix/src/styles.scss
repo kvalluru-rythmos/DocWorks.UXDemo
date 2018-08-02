@@ -1,0 +1,49 @@
+@import "src/assets/css/docWorksTheme.scss";
+
+html {
+  height: 100%;
+}
+
+body {
+  line-height: 18px;
+  font-size: 14px;
+  background-color: $bodycolor;
+  color: #777777;
+  font-family: 'Roboto', sans-serif;
+  height: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: #777777;
+}
+
+h1, h2, h3, h4 {
+  font-weight: normal;
+}
+
+h1 {
+  font-size: 26px !important;
+}
+
+h2 {
+  font-size: 20px !important;
+}
+
+h3 {
+  font-size: 16px !important;
+}
+
+:focus {
+  outline: -webkit-focus-ring-color auto 0px;
+}
+
+a:-webkit-any-link:active {
+  color: inherit;
+}

@@ -1,0 +1,83 @@
+<div ngClass="developer-dashboard-wrapper">
+  <div fxLayout="row" fxFlex="100">
+    <div ngClass="developer-dashboard-left" fxFlex="55%" fxLayout="column">
+      <div ngClass="developer-dashboard-left-header" fxLayout="column" fxLayoutGap="10px" fxFlex="100px">
+        <h1 ngClass="developer-dashboard-left-header-title">Developer Dashboard</h1>
+        <form [formGroup]="developerDashboardForm" fxLayout="row" fxLayoutGap="10px">
+          <mat-form-field fxFlex="50%">
+            <mat-select placeholder="Project" [formControl]="project" (change)="getDistributionList(project.value._id)">
+              <mat-option *ngFor="let project of projectList" [value]="project"> {{ project.projectName }}</mat-option>
+            </mat-select>
+            <mat-progress-bar mode="indeterminate" *ngIf="isProjectsLoading"></mat-progress-bar>
+          </mat-form-field>
+          <mat-form-field fxFlex="50%">
+            <mat-select placeholder="Distribution" [formControl]="distribution" (change)="getNodes(distribution.value)">
+              <mat-option *ngFor="let distribution of distributionList" [value]="distribution.distributionId"> {{ distribution.distributionName }}</mat-option>
+            </mat-select>
+            <mat-progress-bar mode="indeterminate" *ngIf="isDistributionsLoading"></mat-progress-bar>
+          </mat-form-field>
+        </form>
+      </div>
+      <div ngClass="developer-dashboard-left-body-wrapper" fxLayout="column" fxFlex="100">
+        <div ngClass="developer-dashboard-left-body-header" fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+          <span fxFlex fxFlexOffset="10px" ngClass="custom-form-field" fxLayoutAlign="space-between center">
+            <input type="search" fxFlex [(ngModel)]="searchText" (ngModelChange)="searchTree()" placeholder="Search Documents..." />
+            <i class="mdi mdi-magnify mdi-24px"></i>
+          </span>
+          <span ngClass="cursor-pointer" (click)="filterNodesDialog()" fxFlex="20px" fxFlexOffset="10px">
+            <i fxFlex class="mdi mdi-tune mdi-24px"></i>
+          </span>
+          <mat-checkbox [(ngModel)]="nodesWithStatus" color="primary" fxFlexOffset="20px" (ngModelChange)="nodesWithStatusChange()">Nodes with status</mat-checkbox>
+          <mat-slide-toggle [(ngModel)]="localisationStatus" color="primary">
+            Localisation status
+          </mat-slide-toggle>
+          <mat-slide-toggle [(ngModel)]="viewAsToc" color="primary" (ngModelChange)="viewAsTocChange()">
+            View as Toc
+          </mat-slide-toggle>
+        </div>
+        <div ngClass="developer-dashboard-left-body" fxFlex="100" fxLayout="row" fxLayoutAlign="space-between end">
+
+          <p-tree [value]="filteredNodes" fxLayout="row" selectionMode="single" [(selection)]="selectedNode" (onNodeSelect)="nodeSelect()" fxFlexFill>
+            <ng-template let-node pTemplate="default" width="100%">
+              <span ngClass="{{selectedNodeId==node.nodeId ? 'bold' : ''}}">{{node.label}}</span>
+              <div ngClass="node-status-info-wrapper" *ngFor="let local of node.localisationStatus">
+                <span *ngIf="local.local===1||localisationStatus" ngClass="node-status-{{nodeStatus[local.status].class}}">{{localisation[local.local]}}</span>
+                <span ngClass="node-status-progress-info" *ngIf="(local.local===1||localisationStatus)&&local.completed">{{local.completed}}%</span>
+              </div>
+            </ng-template>
+          </p-tree>
+          <div fxLayout="column" fxLayoutAlign="end" fxLayoutGap="5px">
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[0].class}}"></span>
+              <span>published</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[1].class}}"></span>
+              <span>Publish queue</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[2].class}}"></span>
+              <span>in-Progress</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[3].class}}"></span>
+              <span>Version control updated</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[4].class}}"></span>
+              <span>waiting</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[5].class}}"></span>
+              <span>not started</span>
+            </div>
+            <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="start center">
+              <span ngClass="node-status-{{nodeStatus[6].class}}"></span>
+              <span>No Status</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
